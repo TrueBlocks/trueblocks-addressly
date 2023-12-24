@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/base"
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/rpc"
 )
 
 // App struct
@@ -21,7 +24,10 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
+// Export returns the number of transactions found at this address
+func (a *App) Export(addressOrEns string) string {
+	conn := rpc.NewConnection("mainnet", false, map[string]bool{})
+	addr, _ := conn.GetEnsAddress(addressOrEns)
+	address := base.HexToAddress(addr)
+	return fmt.Sprintf("Exporting address %s. Found %d items", address.Hex(), 10)
 }
