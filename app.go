@@ -27,7 +27,11 @@ func (a *App) startup(ctx context.Context) {
 // Export returns the number of transactions found at this address
 func (a *App) Export(addressOrEns string) string {
 	conn := rpc.NewConnection("mainnet", false, map[string]bool{})
-	addr, _ := conn.GetEnsAddress(addressOrEns)
+	addr, ok := conn.GetEnsAddress(addressOrEns)
+	if !ok {
+		return fmt.Sprintln("GetEnsAddress returned not okay")
+	}
 	address := base.HexToAddress(addr)
 	return fmt.Sprintf("Exporting address %s. Found %d items", address.Hex(), 10)
 }
+
