@@ -3,9 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/base"
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/rpc"
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/utils"
 )
 
 // App struct
@@ -32,6 +35,13 @@ func (a *App) Export(addressOrEns string) string {
 		return fmt.Sprintln("GetEnsAddress returned not okay")
 	}
 	address := base.HexToAddress(addr)
-	return fmt.Sprintf("Exporting address %s. Found %d items", address.Hex(), 10)
+	cmd := "chifra list --count " + address.Hex() + " --fmt csv --no_header --output file.fil"
+	_ = utils.System(cmd)
+	value := file.AsciiFileToString("file.fil")
+	s := strings.Split(value, ",")
+	n := address.Hex()
+	if strings.ToLower(addressOrEns) != n {
+		n = addressOrEns + " (" + address.Hex() + ")"
+	}
+	return fmt.Sprintf("%s has %s appearances", n, s[1]) //10)
 }
-
