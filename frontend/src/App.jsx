@@ -16,7 +16,7 @@ function App() {
     return (
         <div id="App">
             <img src={logo} id="logo" alt="logo"/>
-            <div id="result" className="result">{resultText}</div>
+            <div id="result" className="result"><pre>{resultText}</pre></div>
             <div id="input" className="input-box">
                 <input id="name" className="input" onChange={updateName} placeholder="trueblocks.eth" autoComplete="off" name="input" type="text"/>
                 <button className="btn" onClick={exportTxs}>Export</button>
