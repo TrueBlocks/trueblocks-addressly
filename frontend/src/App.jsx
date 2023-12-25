@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import logo from './assets/images/logo-universal.png';
+import logo from './assets/images/logo.png';
 import './App.css';
 import {Export} from "../wailsjs/go/main/App";
 
