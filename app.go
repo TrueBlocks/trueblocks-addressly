@@ -35,13 +35,13 @@ func (a *App) Export(addressOrEns string) string {
 		return fmt.Sprintln("GetEnsAddress returned not okay")
 	}
 	address := base.HexToAddress(addr)
-	cmd := "chifra list --count " + address.Hex() + " --fmt csv --no_header --output file.fil"
+	fn := "downloads/" + address.Hex() + ".csv"
+	cmd := "chifra list " + address.Hex() + " --fmt csv --output " + fn
 	_ = utils.System(cmd)
-	value := file.AsciiFileToString("file.fil")
-	s := strings.Split(value, ",")
+	lines := file.AsciiFileToLines(fn)
 	n := address.Hex()
 	if strings.ToLower(addressOrEns) != n {
 		n = addressOrEns + " (" + address.Hex() + ")"
 	}
-	return fmt.Sprintf("%s has %s appearances", n, s[1]) //10)
+	return fmt.Sprintf("%s has %d appearances (%s exists: %t)", n, len(lines), fn, file.FileExists(fn))
 }
