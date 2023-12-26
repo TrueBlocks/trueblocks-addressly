@@ -33,7 +33,7 @@ func (a *App) startup(ctx context.Context) {
 var maxRecords = utils.NOPOSI
 
 // Export returns the number of transactions found at this address
-func (a *App) Export(addressOrEns string) string {
+func (a *App) Export(addressOrEns, mode string) string {
 	if len(addressOrEns) == 0 {
 		addressOrEns = "trueblocks.eth"
 	}
@@ -50,7 +50,7 @@ func (a *App) Export(addressOrEns string) string {
 		Filename:   fn,
 		Format:     "csv",
 		Subcommand: "export",
-		Rest:       "--logs --articulate",
+		Rest:       mode,
 	}
 
 	logger.Info("Running command: ", cmd.String())
