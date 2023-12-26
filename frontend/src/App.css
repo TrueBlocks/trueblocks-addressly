@@ -5,18 +5,18 @@
 
 #logo {
     display: block;
-    width: 50%;
-    height: 50%;
+    width: 10%;
+    height: 10%;
     margin: auto;
     padding: 10% 0 0;
     background-position: center;
     background-repeat: no-repeat;
-    background-size: 100% 100%;
+    background-size: 70% 70%;
     background-origin: content-box;
 }
 
-.result {
-    height: 20px;
+.address-prompt {
+    width: 40%;
     line-height: 20px;
     margin: 1.5rem auto;
 }
@@ -32,7 +32,7 @@
     cursor: pointer;
 }
 
-.input-box .btn:hover {
+.input-box .btn:hover:enabled {
     background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
     color: #333333;
 }
@@ -56,4 +56,12 @@
 .input-box .input:focus {
     border: none;
     background-color: rgba(255, 255, 255, 1);
+}
+
+.result {
+    width: 40%;
+    height: 20px;
+    line-height: 20px;
+    margin: 1.5rem auto;
+    overflow-wrap: break-word;
 }
