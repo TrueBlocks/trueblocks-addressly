@@ -15,9 +15,8 @@
     background-origin: content-box;
 }
 
-.result {
+.address-prompt {
     width: 40%;
-    height: 20px;
     line-height: 20px;
     margin: 1.5rem auto;
 }
@@ -33,7 +32,7 @@
     cursor: pointer;
 }
 
-.input-box .btn:hover {
+.input-box .btn:hover:enabled {
     background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
     color: #333333;
 }
@@ -57,4 +56,12 @@
 .input-box .input:focus {
     border: none;
     background-color: rgba(255, 255, 255, 1);
+}
+
+.result {
+    width: 40%;
+    height: 20px;
+    line-height: 20px;
+    margin: 1.5rem auto;
+    overflow-wrap: break-word;
 }
