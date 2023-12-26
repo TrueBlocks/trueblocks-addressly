@@ -10,6 +10,7 @@ import (
 
 type Command struct {
 	MaxRecords int
+	Subcommand string
 	Address    base.Address
 	Filename   string
 	Format     string
@@ -17,8 +18,7 @@ type Command struct {
 }
 
 func (cmd *Command) String() string {
-	// listCmd := `chifra list {{.Address}} --fmt {{.Format}} --max_records {{.MaxRecords}} --output {{.Filename}} {{.Rest}}`
-	listCmd := `chifra list {{.Address}} --fmt {{.Format}} {{.Rest}}`
+	listCmd := `chifra {{.Subcommand}} --cache {{.Address}} --fmt {{.Format}} {{.Rest}}`
 	if len(cmd.Filename) > 0 {
 		listCmd += " --output {{.Filename}}"
 	}
