@@ -55,11 +55,15 @@ func (a *App) Export(addressOrEns, mode string) string {
 
 	logger.Info("Running command: ", cmd.String())
 	_ = utils.System(cmd.String())
+	logger.Info("Done...")
 
 	lines := file.AsciiFileToLines(fn)
 	cnt := utils.Max(1, len(lines)) - 1 // subtract one for the header
 
-	_ = utils.System("open " + fn)
-
-	return fmt.Sprintf("Exported %d transactions to %s", cnt, fn)
+	if len(lines) == 0 {
+		return fmt.Sprintf("No transactions found for %s", address.Hex())
+	} else {
+		_ = utils.System("open " + fn)
+		return fmt.Sprintf("Exported %d transactions to %s", cnt, fn)
+	}
 }

@@ -11,7 +11,7 @@ function App() {
     const exportTxs = async () => {
         setLoading(true);
         setResultText(undefined);
-        const result = await Export(name, "--logs --articulate");
+        const result = await Export(name, ""); // "--logs --articulate");
         setResultText(result);
         setLoading(false);
     }
