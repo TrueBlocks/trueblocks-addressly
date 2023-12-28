@@ -63,7 +63,7 @@ func (a *App) Export(addressOrEns, mode string) string {
 	if len(lines) == 0 {
 		return fmt.Sprintf("No transactions found for %s", address.Hex())
 	} else {
-		_ = utils.System("open " + fn)
+		// _ = utils.System("open " + fn)
 		return fmt.Sprintf("Exported %d transactions to %s", cnt, fn)
 	}
 }
