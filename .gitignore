@@ -2,3 +2,4 @@ build/bin
 node_modules
 wailsjs
 frontend/dist
+.DS_Store
