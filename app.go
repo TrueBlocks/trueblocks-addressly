@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/base"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
@@ -34,7 +33,7 @@ func (a *App) startup(ctx context.Context) {
 var maxRecords = utils.NOPOSI
 
 // Export returns the number of transactions found at this address
-func (a *App) Export(addressOrEns string) string {
+func (a *App) Export(addressOrEns, mode string) string {
 	if len(addressOrEns) == 0 {
 		addressOrEns = "trueblocks.eth"
 	}
@@ -43,25 +42,24 @@ func (a *App) Export(addressOrEns string) string {
 	}
 	addrStr, _ := a.conn.GetEnsAddress(addressOrEns)
 	address := base.HexToAddress(addrStr)
-	if strings.HasSuffix(addressOrEns, ".eth") {
-		addrStr = addressOrEns + " (" + address.Hex() + ")"
-	}
 
 	fn := "downloads/" + address.Hex() + ".csv"
 	cmd := Command{
 		MaxRecords: int(maxRecords),
 		Address:    address,
-		// Filename:   fn,
-		Format: "csv",
-		Rest:   "--count --no_header | cut -f2 -d, > " + fn}
+		Filename:   fn,
+		Format:     "csv",
+		Subcommand: "export",
+		Rest:       mode,
+	}
 
 	logger.Info("Running command: ", cmd.String())
 	_ = utils.System(cmd.String())
 
-	// lines := file.AsciiFileToLines(fn)
-	// cnt := len(lines)
-	contents := strings.Trim(file.AsciiFileToString(fn), "\n")
-	cnt := utils.Min(maxRecords, utils.MustParseInt(contents))
+	lines := file.AsciiFileToLines(fn)
+	cnt := utils.Max(1, len(lines)) - 1 // subtract one for the header
 
-	return fmt.Sprintf("%s has\n%d appearances", addrStr, cnt)
+	_ = utils.System("open " + fn)
+
+	return fmt.Sprintf("Exported %d transactions to %s", cnt, fn)
 }

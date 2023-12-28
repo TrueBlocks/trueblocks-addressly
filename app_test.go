@@ -22,7 +22,7 @@ func TestExport(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			var a App
-			actual := strings.Replace(a.Export(test.input), "\n", " ", -1)
+			actual := strings.Replace(a.Export(test.input, "--logs --articulate"), "\n", " ", -1)
 			if actual != test.expected {
 				t.Errorf("TestExport(%s): expected %s, actual %s", test.input, test.expected, actual)
 			}
