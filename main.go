@@ -12,14 +12,11 @@ import (
 var assets embed.FS
 
 func main() {
-	// Create an instance of the app structure
 	app := NewApp()
-
-	// Create application with options
-	if err := wails.Run(&options.App{
-		Title:  "TrueBlocks Account Exporter",
-		Width:  1024,
-		Height: 768,
+	opts := options.App{
+		Title: "TrueBlocks Account Explorer",
+		// Width:  1024,
+		// Height: 768,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
@@ -28,7 +25,10 @@ func main() {
 		Bind: []interface{}{
 			app,
 		},
-	}); err != nil {
+		WindowStartState: options.Maximised,
+	}
+
+	if err := wails.Run(&opts); err != nil {
 		println("Error:", err.Error())
 	}
 }

@@ -1,0 +1,160 @@
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 4fr 32fr 2fr;
+  gap: 5px;
+  width: 98%;
+  height: 98%;
+  margin: 1%;
+}
+
+.logo {
+  display: block;
+  width: 25%;
+  margin: auto;
+  padding: 2px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 25%;
+  background-origin: content-box;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+  grid-template-rows: 1fr;
+  column-gap: 5px;
+}
+
+.header-middle {
+  display: flex;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.75em;
+  font-weight: bold;
+}
+
+.header-right {
+  align-self: flex-end;
+  justify-self: end;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 1fr 6fr;
+  grid-template-rows: 1fr;
+  gap: 5px;
+}
+
+.left-sidebar {
+  /* Make items in the sidebar stack vertically and left align to the top */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  /* border: 1px solid blue;
+  background-color: red; */
+  padding-left: 5px;
+  padding-top: 5px;
+}
+
+.input {
+  border: none;
+  border-radius: 3px;
+  outline: none;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 10px;
+  background-color: rgba(240, 240, 240, 1);
+  -webkit-font-smoothing: antialiased;
+  &:hover {
+    background-color: rgba(255, 255, 255, 1);
+  }
+  &:focus {
+    background-color: rgba(255, 255, 255, 1);
+  }
+}
+
+.btn {
+  width: 60px;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 3px;
+  border: none;
+  margin: 0 0 0 20px;
+  padding: 0 8px;
+  cursor: pointer;
+  &:hover:enabled {
+    background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+    color: #333333;
+  }
+}
+
+.panel.inner {
+  background-color: rgba(36, 51, 72, 1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.inner-content {
+  flex: 1;
+  overflow-wrap: break-word;
+  height: 20px;
+  line-height: 20px;
+  margin: auto;
+  padding-top: 5px;
+}
+
+.inner-footer {
+  height: 5%;
+  width: 100%;
+  border: "1px solid red";
+}
+
+.footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  column-gap: 5px;
+  align-self: flex-end;
+  justify-content: center;
+  padding-bottom: 5px;
+}
+
+.footer-middle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8em;
+}
+
+.footer-right {
+  font-size: 0.8em;
+  justify-self: end;
+}
+
+.footer-right a {
+  margin-left: 10px;
+  color: white;
+}
+
+.panel {
+  /* font-size: 1em; */
+  /* border: 1px solid yellow; */
+}
+
+.chain-select {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
