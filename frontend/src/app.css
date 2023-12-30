@@ -18,12 +18,12 @@ html, body, #root {
 
 .logo {
   display: block;
-  width: 25%;
+  width: 75%;
   margin: auto;
   padding: 2px;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 25%;
+  background-size: 75%;
   background-origin: content-box;
 }
 
@@ -46,6 +46,10 @@ html, body, #root {
 .header-right {
   align-self: flex-end;
   justify-self: end;
+}
+
+.price {
+  font-size: 0.7em;
 }
 
 .main {
@@ -115,10 +119,16 @@ html, body, #root {
   padding-top: 5px;
 }
 
+.inner-footer-ph {
+  height: 5%;
+  width: 100%;
+}
+
 .inner-footer {
   height: 5%;
   width: 100%;
-  border: "1px solid red";
+  background-color: black;
+  color: yellowgreen;
 }
 
 .footer {

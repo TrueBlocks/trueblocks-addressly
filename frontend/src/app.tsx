@@ -1,19 +1,28 @@
-import React, { useState } from "react";
-import { Export } from "../wailsjs/go/main/App";
+import React, { useState, useEffect } from "react";
+import { Export, Reload } from "../wailsjs/go/main/App";
+import * as Wails from "../wailsjs/runtime";
 import logo from "./assets/images/logo.png";
 import "./App.css";
 
 const App: React.FC = () => {
   const [address, setAddress] = useState("trueblocks.eth");
   const [status, setStatus] = useState("Enter an address at the left...");
-  const [progress, setMessage] = useState("log messages are here");
 
+  const mode = "";
   const exportTxs = async () => {
     if (status == "Loading...") {
       return;
     }
     setStatus("Loading...");
-    setStatus(await Export(address, ""));
+    setStatus(await Export(address, mode, false));
+  };
+
+  const reloadTxs = async () => {
+    if (status == "Loading...") {
+      return;
+    }
+    setStatus("Loading...");
+    setStatus(await Reload(address, mode, false));
   };
 
   return (
@@ -28,8 +37,9 @@ const App: React.FC = () => {
           address={address}
           setAddress={setAddress}
           exportTxs={exportTxs}
+          reloadTxs={reloadTxs}
         />
-        <InnerPanel status={status} progress={progress} />
+        <InnerPanel status={status} />
       </div>
       <div className="footer">
         <Config />
@@ -55,8 +65,35 @@ var Title = function () {
 };
 
 var ChainSelector = function () {
+  var [price, setPrice] = useState(0.0);
+  var [latest, setLatest] = useState(0);
+  useEffect(() => {
+    const update = (price: number) => {
+      if (price > 0.0) {
+        setPrice(price);
+      }
+    };
+    Wails.EventsOn("price", update);
+    return () => {
+      Wails.EventsOff("price");
+    };
+  }, []);
+  useEffect(() => {
+    const update = (latest: number) => {
+      if (latest > 0) {
+        setLatest(latest);
+      }
+    };
+    Wails.EventsOn("latest", update);
+    return () => {
+      Wails.EventsOff("latest");
+    };
+  }, []);
+
   return (
     <div className="panel header-right">
+      <div className="price">{latest > 0 ? "latest: " + latest : ""}</div>
+      <div className="price">{price > 0.0 ? "Eth price: " + price : ""}</div>
       <select id="chain-select">
         <option value="mainnet">Mainnet</option>
         <option value="optimism">Optimism</option>
@@ -71,12 +108,14 @@ interface SideBarProps {
   address: string;
   setAddress: React.Dispatch<React.SetStateAction<string>>;
   exportTxs: () => Promise<void>;
+  reloadTxs: () => Promise<void>;
 }
 
 const SideBar: React.FC<SideBarProps> = ({
   address,
   setAddress,
   exportTxs,
+  reloadTxs,
 }) => {
   return (
     <div className="panel left-sidebar">
@@ -95,7 +134,7 @@ const SideBar: React.FC<SideBarProps> = ({
         <br />
         <button
           className="btn"
-          onClick={exportTxs}
+          onClick={reloadTxs}
           disabled={status == "Loading..." || address === ""}
         >
           Export
@@ -107,15 +146,29 @@ const SideBar: React.FC<SideBarProps> = ({
 
 interface InnerPanelProps {
   status: string;
-  progress: string;
 }
 
-const InnerPanel: React.FC<InnerPanelProps> = ({ status, progress }) => {
+const InnerPanel: React.FC<InnerPanelProps> = ({ status }) => {
+  var [progress, setProgress] = useState("log messages are here");
+  useEffect(() => {
+    const update = (progress: string) => {
+      setProgress(progress);
+    };
+    Wails.EventsOn("progress", update);
+    return () => {
+      Wails.EventsOff("progress");
+    };
+  }, []);
+
   var progMsg = function () {
     if (status != "Loading...") {
-      return <div className="inner-footer" />;
+      return <div className="panel inner-footer-ph">&nbsp;</div>;
     } else {
-      return <div className="inner-footer">{progress}</div>;
+      return (
+        <div className="panel inner-footer">
+          <pre>{progress}</pre>
+        </div>
+      );
     }
   };
 
