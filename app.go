@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
+	rt "runtime"
 	"sort"
 	"strings"
 	"time"
@@ -68,6 +71,25 @@ func (a *App) startup(ctx context.Context) {
 	})
 }
 
+func (a *App) OpenUrl(url string) {
+	var err error
+
+	switch rt.GOOS {
+	case "linux":
+		err = exec.Command("xdg-open", url).Start()
+	case "windows":
+		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+	case "darwin":
+		err = exec.Command("open", url).Start()
+	default:
+		err = fmt.Errorf("unsupported platform")
+	}
+
+	if err != nil {
+		log.Println("Failed to open URL:", err)
+	}
+}
+
 var initialized = false
 
 func (a *App) domReady(ctx context.Context) {
@@ -97,7 +119,6 @@ func (a *App) Reload(addressOrEns, mode string, openExcel bool) {
 
 func (a *App) Export(addressOrEns, mode string, openExcel bool) {
 	runtime.EventsEmit(a.ctx, "error", "")
-	runtime.EventsEmit(a.ctx, "progress", "")
 	runtime.EventsEmit(a.ctx, "info", "Loading...")
 	runtime.EventsEmit(a.ctx, "years", "")
 	runtime.EventsEmit(a.ctx, "months", "")
@@ -105,6 +126,11 @@ func (a *App) Export(addressOrEns, mode string, openExcel bool) {
 	runtime.EventsEmit(a.ctx, "fromCount", "")
 	runtime.EventsEmit(a.ctx, "toTopTen", "")
 	runtime.EventsEmit(a.ctx, "fromTopTen", "")
+
+	runtime.EventsEmit(a.ctx, "progress", "Scanning Unchained Index...")
+	defer func() {
+		runtime.EventsEmit(a.ctx, "progress", "")
+	}()
 
 	logger.Info("Export")
 	if !base.IsValidAddress(addressOrEns) {
@@ -143,7 +169,6 @@ func (a *App) Export(addressOrEns, mode string, openExcel bool) {
 	go func() {
 		for {
 			if prog.Finished {
-
 				return
 			}
 			prog.Count, _ = file.WordCount(fn, true)
@@ -200,23 +225,27 @@ func (a *App) Summarize(address base.Address, addressOrEns string) {
 					a.years[address][yKey]++
 				}
 			}
-			if len(parts) > 5 {
-				to := base.HexToAddress(parts[5])
-				if a.to[address] == nil {
-					a.to[address] = make(map[string]int)
-				}
-				if len(to.Hex()) > 10 {
-					a.to[address]["to:"+to.Hex()[0:10]]++
-				}
-			}
 			if len(parts) > 4 {
 				from := base.HexToAddress(parts[4])
 				if a.from[address] == nil {
 					a.from[address] = make(map[string]int)
 				}
-				if len(from.Hex()) > 10 {
-					a.from[address]["from:"+from.Hex()[0:10]]++
+				h := from.Hex()
+				if h == "0x0" {
+					h = "probable airdrops"
 				}
+				a.from[address][h]++
+			}
+			if len(parts) > 5 {
+				to := base.HexToAddress(parts[5])
+				if a.to[address] == nil {
+					a.to[address] = make(map[string]int)
+				}
+				h := to.Hex()
+				if h == "0x0" {
+					h = "contract creations"
+				}
+				a.to[address][h]++
 			}
 		}
 		a.info[address] = strings.ToLower(addressOrEns) + "," + getInfo(address) + "," + getBalance(address)
@@ -235,8 +264,8 @@ func (a *App) Summarize(address base.Address, addressOrEns string) {
 	runtime.EventsEmit(a.ctx, "info", a.info[address])
 	runtime.EventsEmit(a.ctx, "years", asSortedArray1(a.years[address], len(a.years[address]), true, false))
 	runtime.EventsEmit(a.ctx, "months", asSortedArray1(a.months[address], len(a.months[address]), true, false))
-	runtime.EventsEmit(a.ctx, "fromTopTen", asSortedArray1(a.from[address], 25, false, false))
-	runtime.EventsEmit(a.ctx, "toTopTen", asSortedArray1(a.to[address], 25, false, false))
+	runtime.EventsEmit(a.ctx, "fromTopTen", asSortedArray1(a.from[address], 10, false, false))
+	runtime.EventsEmit(a.ctx, "toTopTen", asSortedArray1(a.to[address], 10, false, false))
 	runtime.EventsEmit(a.ctx, "fromCount", "fromCount:"+asSortedArray2(a.fromCounts, len(a.fromCounts), true, true))
 	runtime.EventsEmit(a.ctx, "toCount", "toCount:"+asSortedArray2(a.toCounts, len(a.toCounts), true, true))
 }
@@ -279,7 +308,12 @@ func asSortedArray1(m map[string]int, limit int, bykey, reversed bool) string {
 	})
 
 	if len(ss) > limit {
+		rest := ss[limit:]
 		ss = ss[:limit]
+		ss = append(ss, kv1{"other", 0})
+		for _, v := range rest {
+			ss[len(ss)-1].Value += v.Value
+		}
 	}
 
 	ret := ""
@@ -287,6 +321,7 @@ func asSortedArray1(m map[string]int, limit int, bykey, reversed bool) string {
 	for _, kv := range ss {
 		ret += fmt.Sprintf("%s-%d,", kv.Key, kv.Value)
 	}
+
 	return ret
 }
 

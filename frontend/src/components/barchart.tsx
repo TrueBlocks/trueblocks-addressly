@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -21,20 +22,20 @@ ChartJS.register(
   Legend
 );
 
-interface BarChartProps {
-  dataString: string;
-}
+type Props1 = {
+  str: string;
+};
 
-export const BarChart: React.FC<BarChartProps> = ({ dataString }) => {
-  if (!dataString || !dataString.includes(",")) {
-    return <div>Invalid dataString: {dataString}</div>;
+export const BarChart: React.FC<Props1> = ({ str }) => {
+  if (!str || !str.includes(",")) {
+    return <div>Loading...</div>;
   }
-  dataString = dataString.replace(/^,/, "").replace(/,$/, "");
+  str = str.replace(/^,/, "").replace(/,$/, "");
 
   const parseDataString = (
-    dataStr: string
+    str: string
   ): { labels: string[]; data: number[] } => {
-    const pairs = dataStr.split(",");
+    const pairs = str.split(",");
     const labels: string[] = [];
     const data: number[] = [];
     pairs.forEach((pair) => {
@@ -46,7 +47,7 @@ export const BarChart: React.FC<BarChartProps> = ({ dataString }) => {
     return { labels, data };
   };
 
-  const { labels, data } = parseDataString(dataString);
+  const { labels, data } = parseDataString(str);
 
   const generateColors = (length: number): string[] => {
     return Array.from(
