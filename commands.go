@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"log"
+	"strings"
 	"text/template"
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/base"
@@ -15,10 +16,19 @@ type Command struct {
 	Filename   string
 	Format     string
 	Rest       string
+	Silent     bool
 }
 
 func (cmd *Command) String() string {
 	listCmd := `chifra {{.Subcommand}} --cache {{.Address}} --fmt {{.Format}} {{.Rest}}`
+	if !cmd.Silent {
+		listCmd += "  2>/dev/null"
+	}
+	if cmd.Address.IsZero() {
+		listCmd = strings.Replace(listCmd, " --cache {{.Address}}", "", -1)
+	} else if cmd.Subcommand == "list" {
+		listCmd = strings.Replace(listCmd, " --cache", "", -1)
+	}
 	if len(cmd.Filename) > 0 {
 		listCmd += " --output {{.Filename}}"
 	}

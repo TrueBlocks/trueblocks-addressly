@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"time"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -12,12 +13,9 @@ import (
 var assets embed.FS
 
 func main() {
-	// Create an instance of the app structure
 	app := NewApp()
-
-	// Create application with options
-	if err := wails.Run(&options.App{
-		Title:  "TrueBlocks Account Exporter",
+	opts := options.App{
+		Title:  "TrueBlocks Account Explorer",
 		Width:  1024,
 		Height: 768,
 		AssetServer: &assetserver.Options{
@@ -25,10 +23,28 @@ func main() {
 		},
 		BackgroundColour: &options.RGBA{R: 33, G: 37, B: 41, A: 1},
 		OnStartup:        app.startup,
+		OnDomReady:       app.domReady,
 		Bind: []interface{}{
 			app,
 		},
-	}); err != nil {
+		WindowStartState: options.Maximised,
+	}
+
+	done := false
+	go func() {
+		for {
+			if done {
+				return
+			}
+			app.updateState()
+			time.Sleep(12 * time.Second)
+		}
+	}()
+	defer func() {
+		done = true
+	}()
+
+	if err := wails.Run(&opts); err != nil {
 		println("Error:", err.Error())
 	}
 }
