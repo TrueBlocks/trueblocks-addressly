@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Export, Reload } from "../wailsjs/go/main/App";
 import * as Wails from "../wailsjs/runtime";
 import logo from "./assets/images/logo.png";
+import { BorderedWord } from "./components";
 import "./App.css";
+import { BarChart } from "./barchart";
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
   const [address, setAddress] = useState("trueblocks.eth");
   const [status, setStatus] = useState("Enter an address at the left...");
 
@@ -14,7 +16,8 @@ const App: React.FC = () => {
       return;
     }
     setStatus("Loading...");
-    setStatus(await Export(address, mode, false));
+    await Export(address, mode, false);
+    setStatus("");
   };
 
   const reloadTxs = async () => {
@@ -22,17 +25,18 @@ const App: React.FC = () => {
       return;
     }
     setStatus("Loading...");
-    setStatus(await Reload(address, mode, false));
+    await Reload(address, mode, false);
+    setStatus("");
   };
 
   return (
-    <div className="app">
-      <div className="header">
+    <div className="panel window">
+      <div className="panel header">
         <Logo />
         <Title />
         <ChainSelector />
       </div>
-      <div className="main">
+      <div className="panel main">
         <SideBar
           address={address}
           setAddress={setAddress}
@@ -41,7 +45,7 @@ const App: React.FC = () => {
         />
         <InnerPanel status={status} />
       </div>
-      <div className="footer">
+      <div className="panel footer">
         <Config />
         <Copyright />
         <IconTray />
@@ -50,11 +54,9 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
-
 var Logo = function () {
   return (
-    <div className="panel">
+    <div className="panel header-left">
       <img className="logo" src={logo} alt="logo" />
     </div>
   );
@@ -118,7 +120,7 @@ const SideBar: React.FC<SideBarProps> = ({
   reloadTxs,
 }) => {
   return (
-    <div className="panel left-sidebar">
+    <div className="panel main-sidebar">
       <div>Address or ENS:</div>
       <div>
         <input
@@ -132,11 +134,7 @@ const SideBar: React.FC<SideBarProps> = ({
           autoFocus
         />
         <br />
-        <button
-          className="btn"
-          onClick={reloadTxs}
-          disabled={status == "Loading..." || address === ""}
-        >
+        <button className="btn" onClick={reloadTxs} disabled={address === ""}>
           Export
         </button>
       </div>
@@ -144,12 +142,180 @@ const SideBar: React.FC<SideBarProps> = ({
   );
 };
 
-interface InnerPanelProps {
+interface StatusProps {
   status: string;
 }
 
-const InnerPanel: React.FC<InnerPanelProps> = ({ status }) => {
+const InnerPanel: React.FC<StatusProps> = ({ status }) => {
+  return (
+    <div className="panel inner-panel">
+      <Inner />
+      <Logger status={status} />
+    </div>
+  );
+};
+
+const Inner = function () {
+  var [info, setInfo] = useState("This is the info panel.");
+  var [years, setYears] = useState("This is the years panel");
+  var [months, setMonths] = useState("This is the months panel");
+  var [toCount, setToCount] = useState("This is the toCount panel");
+  var [fromCount, setFromCount] = useState("This is the fromCount panel");
+  var [fromTopTen, setFromTopTen] = useState("This is the fromTopTen panel");
+  var [toTopTen, setToTopTen] = useState("This is the toTopTen panel");
+
+  useEffect(() => {
+    const update = (info: string) => {
+      setInfo(info);
+    };
+    Wails.EventsOn("info", update);
+    return () => {
+      Wails.EventsOff("info");
+    };
+  }, []);
+
+  useEffect(() => {
+    const update = (months: string) => {
+      setMonths(months);
+    };
+    Wails.EventsOn("months", update);
+    return () => {
+      Wails.EventsOff("months");
+    };
+  }, []);
+
+  useEffect(() => {
+    const update = (years: string) => {
+      setYears(years);
+    };
+    Wails.EventsOn("years", update);
+    return () => {
+      Wails.EventsOff("years");
+    };
+  }, []);
+
+  useEffect(() => {
+    const update = (toCount: string) => {
+      setToCount(toCount);
+    };
+    Wails.EventsOn("toCount", update);
+    return () => {
+      Wails.EventsOff("toCount");
+    };
+  }, []);
+
+  useEffect(() => {
+    const update = (fromCount: string) => {
+      setFromCount(fromCount);
+    };
+    Wails.EventsOn("fromCount", update);
+    return () => {
+      Wails.EventsOff("fromCount");
+    };
+  }, []);
+
+  useEffect(() => {
+    const update = (fromTopTen: string) => {
+      setFromTopTen(fromTopTen);
+    };
+    Wails.EventsOn("fromTopTen", update);
+    return () => {
+      Wails.EventsOff("fromTopTen");
+    };
+  }, []);
+
+  useEffect(() => {
+    const update = (toTopTen: string) => {
+      setToTopTen(toTopTen);
+    };
+    Wails.EventsOn("toTopTen", update);
+    return () => {
+      Wails.EventsOff("toTopTen");
+    };
+  }, []);
+
+  let stringArray: string[] = [
+    info,
+    years,
+    months,
+    fromTopTen,
+    fromCount,
+    toTopTen,
+    toCount,
+  ];
+
+  var info1 = function () {
+    // var p = <CommaSeparatedDivs str={info} />;
+    return (
+      <div className="panel inner-panel-body-single">
+        <BorderedWord word="info" content={info} />
+      </div>
+    );
+  };
+
+  var dates = function () {
+    return (
+      <div className="panel inner-panel-body-double">
+        <BorderedWord
+          word="Apps per Year"
+          content={<BarChart dataString={years} />}
+        />
+        <BorderedWord
+          word="Apps per Month"
+          content={<BarChart dataString={months} />}
+        />
+      </div>
+    );
+  };
+
+  var from = (
+    <div className="panel inner-panel-body-double">
+      <BorderedWord word="fromTopTen" content={fromTopTen} />
+      <BorderedWord word="fromCount" content={fromCount} />
+    </div>
+  );
+
+  var to = (
+    <div className="panel inner-panel-body-double">
+      <BorderedWord word="toTopTen" content={toTopTen} />
+      <BorderedWord word="toCount" content={toCount} />
+    </div>
+  );
+
+  var addrs = (
+    <div className="panel inner-panel-body-double">
+      {from}
+      {to}
+    </div>
+  );
+
+  return (
+    <div className="inner-panel-body">
+      {info1()}
+      {dates()}
+      {addrs}
+    </div>
+  );
+};
+
+type Props = {
+  str: string;
+};
+
+const CommaSeparatedDivs: React.FC<Props> = ({ str }) => {
+  const columns = str.split(",");
+  return (
+    <div>
+      {columns.map((column, index) => (
+        <div key={index}>{column.trim()}</div>
+      ))}
+    </div>
+  );
+};
+
+const Logger: React.FC<StatusProps> = ({ status }) => {
   var [progress, setProgress] = useState("log messages are here");
+  var [error, setError] = useState("");
   useEffect(() => {
     const update = (progress: string) => {
       setProgress(progress);
@@ -160,28 +326,35 @@ const InnerPanel: React.FC<InnerPanelProps> = ({ status }) => {
     };
   }, []);
 
-  var progMsg = function () {
-    if (status != "Loading...") {
-      return <div className="panel inner-footer-ph">&nbsp;</div>;
-    } else {
-      return (
-        <div className="panel inner-footer">
-          <pre>{progress}</pre>
-        </div>
-      );
-    }
-  };
+  useEffect(() => {
+    const update = (error: string) => {
+      setError(error);
+    };
+    Wails.EventsOn("error", update);
+    return () => {
+      Wails.EventsOff("error");
+    };
+  }, []);
+
+  var classStr = "panel inner-panel-footer";
+  var content = progress;
+  if (error != "") {
+    classStr += " error";
+    content = error;
+  } else if (status != "Loading...") {
+    classStr += " empty";
+    content = "Enter new addresses to the left...";
+  }
 
   return (
-    <div className="panel inner">
-      <div className="inner-content">{status}</div>
-      {progMsg()}
+    <div className={classStr}>
+      <pre>{content}</pre>
     </div>
   );
 };
 
 var Config = function () {
-  return <div className="panel"></div>;
+  return <div className="panel footer-left">Config</div>;
 };
 
 var Copyright = function () {

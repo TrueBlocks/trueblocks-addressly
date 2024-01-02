@@ -9,3 +9,7 @@ export function Export(arg1, arg2, arg3) {
 export function Reload(arg1, arg2, arg3) {
   return window['go']['main']['App']['Reload'](arg1, arg2, arg3);
 }
+
+export function Summarize(arg1, arg2) {
+  return window['go']['main']['App']['Summarize'](arg1, arg2);
+}
