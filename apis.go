@@ -32,7 +32,6 @@ func (a *App) updateState() {
 	if price, err = getEthUsdPrice(); err != nil {
 		logger.Info(colors.Red, "Error fetching price: ", err, colors.Off)
 	}
-	logger.Info(colors.Yellow, "Got price okay: ", price, colors.Off)
 	fn := "/tmp/latest"
 	defer os.Remove(fn)
 	cmd := Command{
@@ -42,22 +41,24 @@ func (a *App) updateState() {
 		Subcommand: "when",
 		Rest:       "latest --no_header",
 		Silent:     true,
+		Chain:      a.chain,
 	}
 	_ = utils.System(cmd.String())
 	contents := file.AsciiFileToString(fn)
 	parts := strings.Split(contents, ",")
-	state := "||" + price
+	state := "||" + strings.Trim(price, " ")
 	if len(parts) > 2 {
 		state = parts[0] + "|" + parts[2] + "|" + price
 	} else if len(parts) > 1 {
 		state = parts[0] + "||" + price
 	}
+	state += "|" + a.chain
 	logger.Info("Sending state: ", state)
 	runtime.EventsEmit(a.ctx, "chainState", state)
 }
 
-func getBalance(address base.Address) string {
-	fn := "/tmp/" + address.Hex() + ".balance"
+func (a *App) getBalance(address base.Address) string {
+	fn := "/tmp/" + a.chain + "_" + address.Hex() + ".balance"
 	defer os.Remove(fn)
 
 	cmd := Command{
@@ -68,6 +69,7 @@ func getBalance(address base.Address) string {
 		Subcommand: "state",
 		Rest:       "--ether --no_header",
 		Silent:     true,
+		Chain:      a.chain,
 	}
 	logger.Info("Running command: ", cmd.String())
 	_ = utils.System(cmd.String())
@@ -79,8 +81,8 @@ func getBalance(address base.Address) string {
 	return parts[2]
 }
 
-func getInfo(address base.Address) string {
-	fn := "/tmp/" + address.Hex() + ".info"
+func (a *App) getInfo(address base.Address) string {
+	fn := "/tmp/" + a.chain + "_" + address.Hex() + ".info"
 	defer os.Remove(fn)
 
 	cmd := Command{
@@ -91,6 +93,7 @@ func getInfo(address base.Address) string {
 		Subcommand: "list",
 		Rest:       "--bounds --no_header",
 		Silent:     true,
+		Chain:      a.chain,
 	}
 	logger.Info("Running command: ", cmd.String())
 	_ = utils.System(cmd.String())
@@ -124,6 +127,5 @@ func getEthUsdPrice() (string, error) {
 		return "", err
 	}
 
-	logger.Info("fetched price: ", apiResponse.Ethereum.USD)
 	return fmt.Sprintf("%-10.2f", apiResponse.Ethereum.USD), nil
 }

@@ -13,7 +13,7 @@ import (
 var assets embed.FS
 
 func main() {
-	app := NewApp()
+	app := NewApp("mainnet")
 	opts := options.App{
 		Title:  "TrueBlocks Account Explorer",
 		Width:  1024,

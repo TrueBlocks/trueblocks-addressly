@@ -1,3 +1,26 @@
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.panel {
+  margin: 1px;
+  padding: 1px;
+  /* border: 1px solid yellow; */
+}
+
+.window {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 90px 1fr 40px;
+  width: 100vw;
+  height: 100vh;
+  margin-bottom: 5px;
+}
+
 .main {
   display: grid;
   grid-template-columns: 1fr 9fr;
@@ -16,19 +39,14 @@
 
 .inner-panel-body {
   display: grid;
-  grid-template-columns: 17fr 20fr 20fr;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 9fr;
+  gap: 10px;
+  padding: 10px;
   align-items: flex-start;
   justify-items: flex-start;
   overflow: auto;
   border-bottom: 1px solid lightgray;
-}
-
-.inner-panel-body-single {
-  grid-column: 1 / -1;
-  align-items: flex-start;
-  justify-items: flex-start;
-  width: 105%;
 }
 
 .inner-panel-body-triple {
@@ -38,6 +56,13 @@
   justify-items: flex-start;
   width: 100%;
   overflow: scroll;
+}
+
+.inner-panel-body-single {
+  grid-column: 1 / -1;
+  align-items: flex-start;
+  justify-items: flex-start;
+  width: 105%;
 }
 
 .inner-panel-footer {
@@ -85,65 +110,3 @@
   margin: 1px;
   font-family: 'Courier New', Courier, monospace;
 }
-
-html, body, #root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-}
-
-.panel {
-  margin: 1px;
-  padding: 1px;
-  /* border: 1px solid yellow; */
-}
-
-.window {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 90px 1fr 40px;
-  width: 100vw;
-  height: 100vh;
-  margin-bottom: 5px;
-}
-
-/* .header {
-  display: grid;
-  grid-template-columns: 1fr 4fr 1fr;
-  border-bottom: 1px solid lightgray;
-} */
-
-/* .header-left {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-} */
-
-/* .header-middle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.75em;
-  font-weight: bold;
-} */
-
-/* .header-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: flex-end;
-} */
-
-/* .logo {
-  height: 110px;
-} */
-
-/* .price {
-  font-size: 0.7em;
-}
-
-.chain-select {
-  font-size: 0.7em;
-} */

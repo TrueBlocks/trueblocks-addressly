@@ -17,10 +17,11 @@ type Command struct {
 	Format     string
 	Rest       string
 	Silent     bool
+	Chain      string
 }
 
 func (cmd *Command) String() string {
-	listCmd := `chifra {{.Subcommand}} --cache {{.Address}} --fmt {{.Format}} {{.Rest}}`
+	listCmd := `chifra {{.Subcommand}} --cache {{.Address}} --fmt {{.Format}} --chain {{.Chain}} {{.Rest}}`
 	if !cmd.Silent {
 		listCmd += "  2>/dev/null"
 	}

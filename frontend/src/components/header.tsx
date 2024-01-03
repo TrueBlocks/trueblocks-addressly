@@ -1,30 +1,17 @@
 import React, { useEffect, useState, useContext } from "react";
-import * as Wails from "../../wailsjs/runtime";
 import logo from "../assets/images/logo.png";
-import { Layout, Row, Col, Menu, Dropdown, Image } from "antd";
+import { Layout, Row, Col, Select, Image } from "antd";
 import { Typography } from "antd";
-const { Header } = Layout;
-const { Text, Title } = Typography;
 import { AppContext } from "../appcontext";
+const { Text, Title } = Typography;
 
 export var HeaderDiv = function () {
   return (
-    <Header
-      style={{
-        borderBottom: "1px solid lightgray",
-        background: "transparent",
-        padding: "5px",
-        height: "90px",
-        width: "100%",
-        margin: "5px",
-      }}
-    >
-      <Row justify="space-between" align="middle" style={{ width: "100%" }}>
-        <Logo />
-        <MainTitle />
-        <ChainSelector />
-      </Row>
-    </Header>
+    <Row justify="space-between" align="middle" style={{ width: "100%" }}>
+      <Logo />
+      <MainTitle />
+      <ChainState />
+    </Row>
   );
 };
 
@@ -51,8 +38,8 @@ var MainTitle = function () {
   );
 };
 
-var ChainSelector = function () {
-  const { chainState } = useContext(AppContext);
+var ChainState = function () {
+  const { chainState, setChainState } = useContext(AppContext);
   return (
     <Col
       flex={1}
@@ -71,21 +58,6 @@ var ChainSelector = function () {
         {chainState.date !== "" ? chainState.date : ""}
         <br />
         {"Eth price: " + chainState.price}
-        <br />
-        {"Selector:" + "state"}
-        {/*
-        return (
-          <div className="panel header-right">
-              <select id="chain-select">
-                <option value="mainnet">Mainnet</option>
-                <option value="optimism">Optimism</option>
-                <option value="optimism">Sepolia</option>
-                <option value="optimism">Polygon</option>
-              </select>
-            </div>
-          </div>
-        );
-        */}
       </Text>
     </Col>
   );
