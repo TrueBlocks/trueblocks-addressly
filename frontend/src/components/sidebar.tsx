@@ -1,23 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Input, Button, Typography, Space } from "antd";
 const { Text } = Typography;
+import { AppContext } from "../appcontext";
 
 interface SideBarProps {
-  address: string;
-  setAddress: React.Dispatch<React.SetStateAction<string>>;
   exportTxs: () => Promise<void>;
   reloadTxs: () => Promise<void>;
 }
 
-export const SideBar: React.FC<SideBarProps> = ({
-  address,
-  setAddress,
-  exportTxs,
-  reloadTxs,
-}) => {
+export const SideBar: React.FC<SideBarProps> = ({ exportTxs, reloadTxs }) => {
+  var { address, setAddress } = useContext(AppContext);
   return (
     <Space direction="vertical" size="middle" style={{ marginTop: 20 }}>
-      <Text>Address or ENS:</Text>
+      <Text style={{ textAlign: "left", color: "white", fontSize: ".9em" }}>
+        Address or ENS:
+      </Text>
       <Input
         onChange={(e) => setAddress(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && exportTxs()}

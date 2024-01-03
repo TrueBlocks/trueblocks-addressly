@@ -1,5 +1,6 @@
-import React from "react";
-import { Layout, Row, Col, Tooltip } from "antd";
+import React, { useContext } from "react";
+import { Button, Layout, Row, Col, Tooltip } from "antd";
+import { Export } from "../../wailsjs/go/main/App";
 import {
   TwitterOutlined,
   GithubOutlined,
@@ -9,6 +10,7 @@ const { Footer } = Layout;
 import { Typography } from "antd";
 const { Text } = Typography;
 import { OpenUrl } from "../../wailsjs/go/main/App";
+import { AppContext } from "../appcontext";
 
 export const FooterDiv = function () {
   return (
@@ -29,9 +31,21 @@ export const FooterDiv = function () {
 };
 
 var Config = function () {
+  const { address, setAddress } = useContext(AppContext);
+  const updateState = () => {
+    var addr =
+      address === "trueblocks.eth"
+        ? "meriam.eth"
+        : address == "meriam.eth"
+        ? "griff.eth"
+        : "trueblocks.eth";
+    setAddress(addr);
+    Export(addr, "", false);
+  };
+
   return (
-    <Col flex={1} style={{ textAlign: "left" }}>
-      <Text style={{ color: "white", fontSize: "14px" }}>Config</Text>
+    <Col flex={1} style={{ marginTop: "-120px", textAlign: "left" }}>
+      <Button onClick={updateState}>{address}</Button>
     </Col>
   );
 };

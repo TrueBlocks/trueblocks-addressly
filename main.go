@@ -37,7 +37,7 @@ func main() {
 				return
 			}
 			app.updateState()
-			time.Sleep(12 * time.Second)
+			time.Sleep(30 * time.Second)
 		}
 	}()
 	defer func() {

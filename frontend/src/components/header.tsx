@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import * as Wails from "../../wailsjs/runtime";
 import logo from "../assets/images/logo.png";
 import { Layout, Row, Col, Menu, Dropdown, Image } from "antd";
 import { Typography } from "antd";
 const { Header } = Layout;
 const { Text, Title } = Typography;
+import { AppContext } from "../appcontext";
 
 export var HeaderDiv = function () {
   return (
@@ -51,33 +52,7 @@ var MainTitle = function () {
 };
 
 var ChainSelector = function () {
-  var [price, setPrice] = useState(0.0);
-  var [latest, setLatest] = useState(0);
-
-  useEffect(() => {
-    const update = (price: number) => {
-      if (price > 0.0) {
-        setPrice(price);
-      }
-    };
-    Wails.EventsOn("price", update);
-    return () => {
-      Wails.EventsOff("price");
-    };
-  }, []);
-
-  useEffect(() => {
-    const update = (latest: number) => {
-      if (latest > 0) {
-        setLatest(latest);
-      }
-    };
-    Wails.EventsOn("latest", update);
-    return () => {
-      Wails.EventsOff("latest");
-    };
-  }, []);
-
+  const { chainState } = useContext(AppContext);
   return (
     <Col
       flex={1}
@@ -91,17 +66,16 @@ var ChainSelector = function () {
       }}
     >
       <Text style={{ textAlign: "right", color: "white", fontSize: ".9em" }}>
-        {latest > 0 ? "Latest date: " + latest : ""}
+        {chainState.block != "" ? "Latest block: " + chainState.block : ""}
         <br />
-        {latest > 0 ? "Latest block: " + latest : ""}
+        {chainState.date !== "" ? chainState.date : ""}
         <br />
-        {price > 0.0 ? "Eth price: " + price : ""}
+        {"Eth price: " + chainState.price}
         <br />
-        Selector
+        {"Selector:" + "state"}
         {/*
         return (
           <div className="panel header-right">
-            <div className="price"></div>
               <select id="chain-select">
                 <option value="mainnet">Mainnet</option>
                 <option value="optimism">Optimism</option>

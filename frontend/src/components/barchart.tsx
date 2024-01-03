@@ -22,11 +22,11 @@ ChartJS.register(
   Legend
 );
 
-type Props1 = {
+export type Props = {
   str: string;
 };
 
-export const BarChart: React.FC<Props1> = ({ str }) => {
+export const BarChart: React.FC<Props> = ({ str }) => {
   if (!str || !str.includes(",")) {
     return <div>Loading...</div>;
   }

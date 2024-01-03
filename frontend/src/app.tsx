@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AppContext } from "./appcontext";
 import { Export, Reload } from "../wailsjs/go/main/App";
 import * as Wails from "../wailsjs/runtime";
 import "./App.css";
 import {
+  Props,
   FooterDiv as Footer,
   HeaderDiv as Header,
   SideBar,
+  BarChart,
 } from "./components";
-import { BarChart } from "./components/barchart";
 
 export const App: React.FC = () => {
-  const [address, setAddress] = useState("trueblocks.eth");
+  const { address } = useContext(AppContext);
   const [status, setStatus] = useState("Enter an address at the left...");
 
   const mode = "";
@@ -36,12 +38,7 @@ export const App: React.FC = () => {
     <div className="panel window">
       <Header />
       <div className="panel main">
-        <SideBar
-          address={address}
-          setAddress={setAddress}
-          exportTxs={exportTxs}
-          reloadTxs={reloadTxs}
-        />
+        <SideBar exportTxs={exportTxs} reloadTxs={reloadTxs} />
         <InnerPanel />
       </div>
       <Footer />
@@ -207,10 +204,6 @@ const Inner = function () {
   );
 };
 
-type Props = {
-  str: string;
-};
-
 const CommaSeparatedDivs: React.FC<Props> = ({ str }) => {
   const columns = str.split(",");
   return (
@@ -275,82 +268,3 @@ const BorderedWord: React.FC<BorderedWordProps> = ({ word, content }) => {
     </div>
   );
 };
-
-// type Props1 = {
-//   str: string;
-// };
-
-// const BarChart: React.FC<Props1> = ({ str }) => {
-//   if (!str || !str.includes(",")) {
-//     return <div>Loading...</div>;
-//   }
-//   str = str.replace(/^,/, "").replace(/,$/, "");
-
-//   const parseDataString = (
-//     str: string
-//   ): { labels: string[]; data: number[] } => {
-//     const pairs = str.split(",");
-//     const labels: string[] = [];
-//     const data: number[] = [];
-//     pairs.forEach((pair) => {
-//       const [label, count] = pair.split("-").map((str) => str.trim());
-//       labels.push(label);
-//       data.push(parseInt(count));
-//     });
-
-//     return { labels, data };
-//   };
-
-//   const { labels, data } = parseDataString(str);
-
-//   const generateColors = (length: number): string[] => {
-//     return Array.from(
-//       { length },
-//       (_, i) => `hsl(${(i / length) * 360}, 70%, 50%)`
-//     );
-//   };
-
-//   const chartData: ChartData<"bar"> = {
-//     labels: labels,
-//     datasets: [
-//       {
-//         label: "",
-//         data: data,
-//         backgroundColor: generateColors(data.length),
-//       },
-//     ],
-//   };
-
-//   const options: ChartOptions<"bar"> = {
-//     plugins: {
-//       tooltip: {
-//         callbacks: {
-//           label: function (context) {
-//             let label = context.dataset.label || "";
-//             if (label) {
-//               label += ": ";
-//             }
-//             if (context.parsed.y !== null) {
-//               label += new Intl.NumberFormat().format(context.parsed.y);
-//             }
-//             return label;
-//           },
-//         },
-//       },
-//       legend: {
-//         display: false,
-//       },
-//     },
-//     scales: {
-//       y: {
-//         ticks: {
-//           callback: function (value) {
-//             return new Intl.NumberFormat().format(value as number);
-//           },
-//         },
-//       },
-//     },
-//   };
-
-//   return <Bar data={chartData} options={options} />;
-// };
