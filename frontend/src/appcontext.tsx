@@ -15,9 +15,24 @@ interface IAppContext {
   setInfo: React.Dispatch<React.SetStateAction<string>>;
   current: number;
   setCurrent: React.Dispatch<React.SetStateAction<number>>;
+  monitors: string;
+  setMonitors: React.Dispatch<React.SetStateAction<string>>;
   chainState: IChainState;
   setChainState: React.Dispatch<React.SetStateAction<IChainState>>;
 }
+
+var defaultMonitors = `trueblocks.eth
+vald.eth
+meriam.eth
+griff.eth
+vitalik.eth
+giveth.eth
+ethereumfoundation.eth
+gitcoin.eth
+gnosis.eth
+makerdao.eth
+molochdao.eth
+ethdenver.eth`;
 
 export const AppContext = createContext<IAppContext>({
   address: "",
@@ -26,6 +41,8 @@ export const AppContext = createContext<IAppContext>({
   setInfo: () => {},
   current: 0,
   setCurrent: () => {},
+  monitors: defaultMonitors,
+  setMonitors: () => {},
   chainState: { block: "", date: "", price: "", chain: "" },
   setChainState: () => {},
 });
@@ -38,6 +55,7 @@ export function AppProvider({ children }: AppProviderProps) {
   const [address, setAddress] = useState("trueblocks.eth");
   const [current, setCurrent] = useState(0);
   const [info, setInfo] = useState("");
+  const [monitors, setMonitors] = useState(defaultMonitors);
   const [chainState, setChainState] = useState<IChainState>({
     block: "",
     date: "",
@@ -71,6 +89,16 @@ export function AppProvider({ children }: AppProviderProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const update = (monitors: string) => {
+      setMonitors(monitors);
+    };
+    Wails.EventsOn("monitors", update);
+    return () => {
+      Wails.EventsOff("monitors");
+    };
+  }, []);
+
   const value: IAppContext = {
     address,
     setAddress,
@@ -78,6 +106,8 @@ export function AppProvider({ children }: AppProviderProps) {
     setInfo,
     current,
     setCurrent,
+    monitors,
+    setMonitors,
     chainState,
     setChainState,
   };
