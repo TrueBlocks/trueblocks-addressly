@@ -48,12 +48,12 @@ export function appearanceLine(column: string) {
   var red = {
     fontFamily: '"Courier New", monospace',
     fontWeight: "light",
-    color: "#f0b0b0",
+    color: "#222222" /* "#f79090", */,
   };
   var blue = {
     fontFamily: '"Courier New", monospace',
     fontWeight: "bold",
-    color: "dodgerblue",
+    color: "darkpurple",
   };
   var s1 = {};
   var s2 = {};

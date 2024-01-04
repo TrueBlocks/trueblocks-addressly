@@ -8,7 +8,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/base"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/colors"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/logger"
@@ -41,7 +40,7 @@ func (a *App) updateState() {
 		Subcommand: "when",
 		Rest:       "latest --no_header",
 		Silent:     true,
-		Chain:      a.chain,
+		Chain:      a.dataFile.Chain,
 	}
 	_ = utils.System(cmd.String())
 	contents := file.AsciiFileToString(fn)
@@ -53,24 +52,24 @@ func (a *App) updateState() {
 		state = parts[0] + "||" + price
 	}
 
-	state += "|" + a.chain
+	state += "|" + a.dataFile.Chain
 	logger.Info("Sending state: ", state)
 	runtime.EventsEmit(a.ctx, "chainState", state)
 }
 
-func (a *App) getBalance(address base.Address) string {
-	fn := "/tmp/" + a.chain + "_" + address.Hex() + ".balance"
+func (a *App) getBalance() string {
+	fn := "/tmp/" + a.dataFile.Chain + "_" + a.dataFile.Address.Hex() + ".balance"
 	defer os.Remove(fn)
 
 	cmd := Command{
 		MaxRecords: int(maxRecords),
-		Address:    address,
+		Address:    a.dataFile.Address,
 		Filename:   fn,
 		Format:     "csv",
 		Subcommand: "state",
 		Rest:       "--ether --no_header",
 		Silent:     true,
-		Chain:      a.chain,
+		Chain:      a.dataFile.Chain,
 	}
 	logger.Info("Running command: ", cmd.String())
 	_ = utils.System(cmd.String())
@@ -82,23 +81,37 @@ func (a *App) getBalance(address base.Address) string {
 	return parts[2]
 }
 
-func (a *App) getInfo(address base.Address) string {
-	fn := "/tmp/" + a.chain + "_" + address.Hex() + ".info"
+func (a *App) getInfo(addressOrEns string) string {
+	fn := "/tmp/" + a.dataFile.Chain + "_" + a.dataFile.Address.Hex() + ".info"
 	defer os.Remove(fn)
 
 	cmd := Command{
 		MaxRecords: int(maxRecords),
-		Address:    address,
+		Address:    a.dataFile.Address,
 		Filename:   fn,
 		Format:     "csv",
 		Subcommand: "list",
 		Rest:       "--bounds --no_header",
 		Silent:     true,
-		Chain:      a.chain,
+		Chain:      a.dataFile.Chain,
 	}
 	logger.Info("Running command: ", cmd.String())
 	_ = utils.System(cmd.String())
-	return file.AsciiFileToString(fn)
+	contents := strings.ToLower(addressOrEns) + "," + file.AsciiFileToString(fn) + "," + a.getBalance()
+	parts := strings.Split(contents, ",")
+	if len(parts) < 11 {
+		return ""
+	}
+	parts[0] = a.namesMap[a.dataFile.Chain][a.dataFile.Address].Name
+	parts[3] = parts[3] + " " + parts[5]
+	parts[4] = parts[6] + " " + parts[8]
+	parts[5] = parts[11]
+	parts[6] = parts[9]
+	parts[7] = parts[10]
+	parts[8] = ""
+	return strings.Join(parts[:9], ",")
+	// return file.AsciiFileToString(fn)
+	//trueblocks.eth,0xf503017d7baf7fbc0fff7492b751025c6a78179b,4158,8854723.61,1572639538,2019-11-01 20:18:58 UTC,18752751.88,1702174307,2023-12-10 02:11:47 UTC,9898028,2380 ,71.713067671079880299
 }
 
 func getEthUsdPrice() (string, error) {

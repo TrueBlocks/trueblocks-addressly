@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Input, Button, Typography, Space, Switch } from "antd";
 import { AppContext } from "../appcontext";
-import { Export, Reload } from "../../wailsjs/go/main/App";
+import { Export, Reload, SetExportExcel } from "../../wailsjs/go/main/App";
 import { ChainSelector } from "./chainselector";
 const { Text } = Typography;
 
@@ -26,6 +26,10 @@ export const SideBar: React.FC = () => {
     setStatus("Loading...");
     await Reload(address, mode, false);
     setStatus("");
+  };
+
+  const handleToggle = (value: boolean) => {
+    SetExportExcel(value);
   };
 
   return (
@@ -58,7 +62,7 @@ export const SideBar: React.FC = () => {
       </Text>
       <ChainSelector />
       <Text style={{ color: "white" }}>
-        Export to Excel: <Switch size="small"></Switch>
+        Export to Excel: <Switch onClick={SetExportExcel} size="small"></Switch>
       </Text>
     </Space>
   );

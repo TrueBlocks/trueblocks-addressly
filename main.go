@@ -4,6 +4,7 @@ import (
 	"embed"
 	"time"
 
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/base"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -13,7 +14,7 @@ import (
 var assets embed.FS
 
 func main() {
-	app := NewApp("mainnet")
+	app := NewApp("mainnet", base.HexToAddress("0xf503017d7baf7fbc0fff7492b751025c6a78179b"))
 	opts := options.App{
 		Title:  "TrueBlocks Account Explorer",
 		Width:  1024,

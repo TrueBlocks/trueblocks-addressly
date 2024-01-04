@@ -27,7 +27,8 @@ export type Props = {
 };
 
 export const BarChart: React.FC<Props> = ({ str }) => {
-  if (!str || !str.includes(",")) {
+  if (!str) {
+    // } || !str.includes(",")) {
     return <div>Loading...</div>;
   }
   str = str.replace(/^,/, "").replace(/,$/, "");

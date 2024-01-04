@@ -3,6 +3,7 @@ import * as Wails from "../../wailsjs/runtime";
 import "./inner.css";
 import { Card } from "antd";
 import { appearanceLine } from "./senders";
+import { resetWarned } from "antd/es/_util/warning";
 
 export const Recipients: React.FC = () => {
   var [asRecipient, setFromTopTen] = useState("This is the asRecipient panel");
@@ -21,6 +22,30 @@ export const Recipients: React.FC = () => {
   return (
     <div className="panel inner-panel-body-triple">
       <Card
+        // title={
+        //   <div style={{ display: "grid", gridTemplateColumns: "10fr 1fr" }}>
+        //     <div
+        //       style={{
+        //         margin: 0,
+        //         padding: 0,
+        //         color: "blue",
+        //       }}
+        //     >
+        //       As Received
+        //     </div>
+        //     <div
+        //       style={{
+        //         margin: 0,
+        //         padding: 0,
+        //         color: "blue",
+        //         fontSize: ".7em",
+        //         fontStyle: "italic",
+        //       }}
+        //     >
+        //       context
+        //     </div>
+        //   </div>
+        // }
         title="As Receiver"
         style={{
           textAlign: "left",

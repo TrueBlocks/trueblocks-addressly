@@ -51,11 +51,42 @@ const Config: React.FC = () => {
   };
 
   return (
-    <Col flex={1} style={{ marginTop: "-120px", textAlign: "left" }}>
-      <Button onClick={first}>{"<<"}</Button>
-      <Button onClick={prev}>{"<"}</Button>
-      <Button onClick={next}>{">"}</Button>
-      <Button onClick={last}>{">>"}</Button>
+    <Col
+      flex={1}
+      style={{
+        marginLeft: "-40px",
+        marginTop: "-70px",
+        textAlign: "left",
+      }}
+    >
+      <Button
+        type="link"
+        style={{ color: "white", height: "50px" }}
+        onClick={first}
+      >
+        {"<<"}
+      </Button>
+      <Button
+        type="link"
+        style={{ color: "white", height: "50px" }}
+        onClick={prev}
+      >
+        {"<"}
+      </Button>
+      <Button
+        type="link"
+        style={{ color: "white", height: "50px" }}
+        onClick={next}
+      >
+        {">"}
+      </Button>
+      <Button
+        type="link"
+        style={{ color: "white", height: "50px" }}
+        onClick={last}
+      >
+        {">>"}
+      </Button>
     </Col>
   );
 };
