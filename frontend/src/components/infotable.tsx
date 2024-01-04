@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useContext } from "react";
 import * as Wails from "../../wailsjs/runtime";
 import { Table, Typography } from "antd";
+import { AppContext } from "../appcontext";
 const { Text } = Typography;
 
 interface TableRow {
@@ -14,16 +15,7 @@ interface TableRow {
 }
 
 export const MyTableComponent: React.FC = () => {
-  var [info, setInfo] = useState("This is the info panel.");
-  useEffect(() => {
-    const update = (info: string) => {
-      setInfo(info);
-    };
-    Wails.EventsOn("info", update);
-    return () => {
-      Wails.EventsOff("info");
-    };
-  }, []);
+  var { info, setInfo } = useContext(AppContext);
 
   const fields = info.split(",");
   const fieldNames = [
@@ -40,6 +32,7 @@ export const MyTableComponent: React.FC = () => {
     "Blocks Between",
     "ETH Balance",
   ];
+
   const combinedArray = fieldNames.reduce(
     (acc, name, index) => [...acc, name, fields[index] ?? ""],
     [] as string[]
@@ -84,6 +77,7 @@ export const MyTableComponent: React.FC = () => {
       dataIndex: "field2",
       key: "field2",
       width: widths[1],
+      overflow: "hidden",
     },
     {
       dataIndex: "field3",
@@ -94,6 +88,7 @@ export const MyTableComponent: React.FC = () => {
       dataIndex: "field4",
       key: "field4",
       width: widths[3],
+      overflow: "hidden",
     },
     {
       dataIndex: "field5",
@@ -104,6 +99,7 @@ export const MyTableComponent: React.FC = () => {
       dataIndex: "field6",
       key: "field6",
       width: widths[5],
+      overflow: "hidden",
     },
   ];
 

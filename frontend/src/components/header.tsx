@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import logo from "../assets/images/logo.png";
-import { Layout, Row, Col, Select, Image } from "antd";
+import { Row, Col, Image } from "antd";
 import { Typography } from "antd";
 import { AppContext } from "../appcontext";
 const { Text, Title } = Typography;

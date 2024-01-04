@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import * as Wails from "../../wailsjs/runtime";
+import * as Wails from "../../wailsjs/runtime/runtime";
 import "../App.css";
 
-export const Logger = () => {
+export const Logging = () => {
   const [progress, setProgress] = useState("");
   const [error, setError] = useState("");
 
@@ -19,7 +19,9 @@ export const Logger = () => {
     };
   }, []);
 
-  const classStr = `panel inner-panel-footer ${error ? "error" : progress ? "" : "empty"}`;
+  const classStr = `panel inner-panel-footer ${
+    error ? "error" : progress ? "" : "empty"
+  }`;
   const content = error || progress || "Enter new addresses to the left...";
 
   return (

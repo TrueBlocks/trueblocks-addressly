@@ -39,7 +39,7 @@ export const BarChart: React.FC<Props> = ({ str }) => {
     const labels: string[] = [];
     const data: number[] = [];
     pairs.forEach((pair) => {
-      const [label, count] = pair.split("-").map((str) => str.trim());
+      const [label, count] = pair.split("|").map((str) => str.trim());
       labels.push(label);
       data.push(parseInt(count));
     });

@@ -6,6 +6,10 @@ export function Clear(arg1) {
   return window['go']['main']['App']['Clear'](arg1);
 }
 
+export function CounterKey(arg1, arg2) {
+  return window['go']['main']['App']['CounterKey'](arg1, arg2);
+}
+
 export function Export(arg1, arg2, arg3) {
   return window['go']['main']['App']['Export'](arg1, arg2, arg3);
 }

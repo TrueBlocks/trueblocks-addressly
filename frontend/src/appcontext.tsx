@@ -11,6 +11,8 @@ interface IChainState {
 interface IAppContext {
   address: string;
   setAddress: React.Dispatch<React.SetStateAction<string>>;
+  info: string;
+  setInfo: React.Dispatch<React.SetStateAction<string>>;
   current: number;
   setCurrent: React.Dispatch<React.SetStateAction<number>>;
   chainState: IChainState;
@@ -20,6 +22,8 @@ interface IAppContext {
 export const AppContext = createContext<IAppContext>({
   address: "",
   setAddress: () => {},
+  info: "",
+  setInfo: () => {},
   current: 0,
   setCurrent: () => {},
   chainState: { block: "", date: "", price: "", chain: "" },
@@ -33,6 +37,7 @@ interface AppProviderProps {
 export function AppProvider({ children }: AppProviderProps) {
   const [address, setAddress] = useState("trueblocks.eth");
   const [current, setCurrent] = useState(0);
+  const [info, setInfo] = useState("");
   const [chainState, setChainState] = useState<IChainState>({
     block: "",
     date: "",
@@ -56,9 +61,21 @@ export function AppProvider({ children }: AppProviderProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const update = (info: string) => {
+      setInfo(info);
+    };
+    Wails.EventsOn("info", update);
+    return () => {
+      Wails.EventsOff("info");
+    };
+  }, []);
+
   const value: IAppContext = {
     address,
     setAddress,
+    info,
+    setInfo,
     current,
     setCurrent,
     chainState,

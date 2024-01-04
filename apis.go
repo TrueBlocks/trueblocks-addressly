@@ -52,6 +52,7 @@ func (a *App) updateState() {
 	} else if len(parts) > 1 {
 		state = parts[0] + "||" + price
 	}
+
 	state += "|" + a.chain
 	logger.Info("Sending state: ", state)
 	runtime.EventsEmit(a.ctx, "chainState", state)
