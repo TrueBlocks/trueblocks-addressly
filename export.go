@@ -40,19 +40,17 @@ func (a *App) initExport(addressOrEns string) (base.Address, error) {
 		return base.Address{}, fmt.Errorf("invalid address or ENS name: %s", addressOrEns)
 	}
 
-	addrStr, _ := a.conn.GetEnsAddress(addressOrEns)
-	address := base.HexToAddress(addrStr)
-	if address.IsZero() {
+	a.SetAddress(addressOrEns)
+	if a.dataFile.Address.IsZero() {
 		return base.Address{}, fmt.Errorf("no ENS address found: %s", addressOrEns)
 	}
 
-	return address, nil
+	return a.dataFile.Address, nil
 }
 
 func (a *App) Reload(addressOrEns, mode string, openExcel bool) {
 	logger.Info("Reload")
-	addrStr, _ := a.conn.GetEnsAddress(addressOrEns)
-	a.dataFile.Address = base.HexToAddress(addrStr)
+	a.SetAddress(addressOrEns)
 	dfKey := a.dataFile
 	a.monitors[dfKey] = nil
 	a.Export(addressOrEns, mode, openExcel)
@@ -70,7 +68,7 @@ func (a *App) Export(addressOrEns, mode string, openExcel bool) {
 
 	} else {
 		dfKey := a.dataFile
-		logger.Info("Export")
+		// logger.Info("Export")
 		folder := "/Users/jrush/Development/trueblocks-addressly/downloads/" + a.dataFile.Chain + "/"
 		file.EstablishFolder(folder)
 		fn := folder + a.dataFile.Address.Hex() + ".csv"
@@ -87,7 +85,7 @@ func (a *App) Export(addressOrEns, mode string, openExcel bool) {
 			runtime.EventsEmit(a.ctx, "info", a.getInfo(addressOrEns))
 			a.monitors[dfKey] = &mon
 			os.Remove(fn)
-			logger.Info("Count:", a.monitors[dfKey].Count())
+			// logger.Info("Count:", a.monitors[dfKey].Count())
 		}
 
 		prog := Progress{Count: 0, Total: int(a.monitors[dfKey].Count())}
@@ -102,7 +100,7 @@ func (a *App) Export(addressOrEns, mode string, openExcel bool) {
 				msg := fmt.Sprintf("Exporting %6d of %6d for %s", prog.Count, prog.Total, a.dataFile.Address.Hex())
 				runtime.EventsEmit(a.ctx, "error", "")
 				runtime.EventsEmit(a.ctx, "progress", msg)
-				logger.Info("Progress:", msg)
+				// logger.Info("Progress:", msg)
 				time.Sleep(100 * time.Millisecond)
 			}
 		}()
@@ -118,9 +116,9 @@ func (a *App) Export(addressOrEns, mode string, openExcel bool) {
 			Chain:      a.dataFile.Chain,
 		}
 
-		logger.Info("Running command: ", cmd.String())
+		// logger.Info("Running command: ", cmd.String())
 		_ = utils.System(cmd.String())
-		logger.Info("Done...")
+		// logger.Info("Done...")
 
 		a.lines[dfKey] = file.AsciiFileToLines(fn)
 		if len(a.lines[dfKey]) == 0 {
@@ -156,13 +154,13 @@ func (a *App) Summarize(addressOrEns string) {
 						a.months[dfKey] = make(map[string]int)
 					}
 					a.months[dfKey][mKey]++
-					logger.Info("Here", mKey, a.months[dfKey][mKey])
+					// logger.Info("Here", mKey, a.months[dfKey][mKey])
 					yKey := pp[0]
 					if a.years[dfKey] == nil {
 						a.years[dfKey] = make(map[string]int)
 					}
 					a.years[dfKey][yKey]++
-					logger.Info("Here", yKey, a.months[dfKey][yKey])
+					// logger.Info("Here", yKey, a.months[dfKey][yKey])
 				}
 			}
 

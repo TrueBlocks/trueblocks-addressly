@@ -8,6 +8,7 @@ import (
 	rt "runtime"
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/base"
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/logger"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/monitor"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/names"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/rpc"
@@ -97,10 +98,8 @@ func (a *App) OpenUrl(url string) {
 	}
 }
 
-var initialized = false
-
 func (a *App) domReady(ctx context.Context) {
-	initialized = true
-	a.updateState()
 	a.Export(a.dataFile.Address.Hex(), "", false)
+	logger.Info("----------------------------------------")
+	a.updateState()
 }

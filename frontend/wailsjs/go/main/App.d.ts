@@ -12,6 +12,8 @@ export function OpenUrl(arg1:string):Promise<void>;
 
 export function Reload(arg1:string,arg2:string,arg3:boolean):Promise<void>;
 
+export function SetAddress(arg1:string):Promise<void>;
+
 export function SetChain(arg1:string,arg2:string):Promise<void>;
 
 export function SetChartType(arg1:string):Promise<void>;

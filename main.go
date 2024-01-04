@@ -18,7 +18,7 @@ func main() {
 	opts := options.App{
 		Title:  "TrueBlocks Account Explorer",
 		Width:  1024,
-		Height: 768,
+		Height: 300,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
@@ -37,8 +37,8 @@ func main() {
 			if done {
 				return
 			}
-			app.updateState()
 			time.Sleep(30 * time.Second)
+			app.updateState()
 		}
 	}()
 	defer func() {

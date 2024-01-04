@@ -22,6 +22,10 @@ export function Reload(arg1, arg2, arg3) {
   return window['go']['main']['App']['Reload'](arg1, arg2, arg3);
 }
 
+export function SetAddress(arg1) {
+  return window['go']['main']['App']['SetAddress'](arg1);
+}
+
 export function SetChain(arg1, arg2) {
   return window['go']['main']['App']['SetChain'](arg1, arg2);
 }
