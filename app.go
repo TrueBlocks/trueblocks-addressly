@@ -6,13 +6,17 @@ import (
 	"log"
 	"os/exec"
 	rt "runtime"
+	"strings"
+	"time"
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/base"
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/logger"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/monitor"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/names"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/rpc"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/types"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type DataFile struct {
@@ -66,17 +70,17 @@ func (a *App) Clear(chain string, address base.Address) {
 func NewApp(chain string, address base.Address) *App {
 	var app App
 	app.Clear(chain, address)
-	nameParts := names.Custom | names.Prefund | names.Regular
-	m, err := names.LoadNamesMap(chain, nameParts, nil)
-	app.namesMap[chain] = m
-	if err != nil {
-		return nil
-	}
 	return &app
 }
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	nameParts := names.Custom | names.Prefund | names.Regular
+	m, err := names.LoadNamesMap(a.dataFile.Chain, nameParts, nil)
+	a.namesMap[a.dataFile.Chain] = m
+	if err != nil {
+		logger.Error("Failed to load names map:", err)
+	}
 }
 
 func (a *App) OpenUrl(url string) {
@@ -99,7 +103,22 @@ func (a *App) OpenUrl(url string) {
 }
 
 func (a *App) domReady(ctx context.Context) {
-	a.Export(a.dataFile.Address.Hex(), "", false)
-	logger.Info("----------------------------------------")
+	a.Export(a.dataFile.Address.Hex(), "")
 	a.updateState()
+	runtime.EventsEmit(a.ctx, "chartType", strings.Trim(file.AsciiFileToString("chartType.txt"), "\n"))
+	runtime.EventsEmit(a.ctx, "exportExcel", strings.Trim(file.AsciiFileToString("exportExcel.txt"), "\n"))
+	if file.FileExists("addresses.txt") {
+		lines := file.AsciiFileToLines("addresses.txt")
+		m := make([]string, 0, len(lines))
+		for _, line := range lines {
+			if strings.HasPrefix(line, "#") {
+				continue
+			}
+			m = append(m, line)
+		}
+		runtime.EventsEmit(a.ctx, "monitors", strings.Join(m, "\n"))
+	}
+	runtime.EventsEmit(a.ctx, "progress", "Loading names map...")
+	time.Sleep(1 * time.Second)
+	runtime.EventsEmit(a.ctx, "progress", "")
 }

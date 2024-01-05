@@ -11,7 +11,6 @@ import (
 
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/base"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
-	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/logger"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/monitor"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/utils"
 )
@@ -48,15 +47,19 @@ func (a *App) initExport(addressOrEns string) (base.Address, error) {
 	return a.dataFile.Address, nil
 }
 
-func (a *App) Reload(addressOrEns, mode string, openExcel bool) {
-	logger.Info("Reload")
-	a.SetAddress(addressOrEns)
+var exportToExcel = false
+
+func (a *App) Freshen(addressOrEns, mode string) {
+	addrStr, _ := a.conn.GetEnsAddress(addressOrEns)
+	a.dataFile.Address = base.HexToAddress(addrStr)
 	dfKey := a.dataFile
 	a.monitors[dfKey] = nil
-	a.Export(addressOrEns, mode, openExcel)
+	exportToExcel = file.AsciiFileToString("exportExcel.txt") == "true"
+	a.Export(addressOrEns, mode)
+	exportToExcel = false
 }
 
-func (a *App) Export(addressOrEns, mode string, openExcel bool) {
+func (a *App) Export(addressOrEns, mode string) {
 	defer func() {
 		runtime.EventsEmit(a.ctx, "progress", "")
 	}()
@@ -68,7 +71,6 @@ func (a *App) Export(addressOrEns, mode string, openExcel bool) {
 
 	} else {
 		dfKey := a.dataFile
-		// logger.Info("Export")
 		folder := "/Users/jrush/Development/trueblocks-addressly/downloads/" + a.dataFile.Chain + "/"
 		file.EstablishFolder(folder)
 		fn := folder + a.dataFile.Address.Hex() + ".csv"
@@ -125,7 +127,7 @@ func (a *App) Export(addressOrEns, mode string, openExcel bool) {
 			runtime.EventsEmit(a.ctx, "error", fmt.Sprintf("No transactions found for %s", a.dataFile.Address.Hex()))
 			return
 		} else {
-			if openExcel {
+			if exportToExcel {
 				_ = utils.System("open " + fn)
 			}
 			a.Summarize(addressOrEns)

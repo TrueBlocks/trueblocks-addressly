@@ -10,6 +10,7 @@ const { TabPane } = Tabs;
 export const Charts: React.FC = () => {
   var [years, setYears] = useState("This is the years panel");
   var [months, setMonths] = useState("This is the months panel");
+  var [chartType, setChartType] = useState("");
 
   useEffect(() => {
     const update = (months: string) => {
@@ -31,19 +32,29 @@ export const Charts: React.FC = () => {
     };
   }, []);
 
-  const handleTabChange = (key: string) => {
-    const chartType = key === "1" ? "Year" : "Month";
+  useEffect(() => {
+    const update = (chartType: string) => {
+      setChartType(chartType);
+    };
+    Wails.EventsOn("chartType", update);
+    return () => {
+      Wails.EventsOff("chartType");
+    };
+  }, []);
+
+  const handleTabChange = (chartType: string) => {
+    setChartType(chartType);
     SetChartType(chartType);
   };
 
   return (
     <div className="panel inner-panel-body-triple">
       <Card title="Appearances" style={{ textAlign: "left", width: "100%" }}>
-        <Tabs defaultActiveKey="1" onChange={handleTabChange}>
-          <TabPane tab="Annually" key="1">
+        <Tabs activeKey={chartType} onChange={handleTabChange}>
+          <TabPane tab="Annually" key="year">
             <BarChart str={years} />
           </TabPane>
-          <TabPane tab="Monthly" key="2">
+          <TabPane tab="Monthly" key="month">
             <BarChart str={months} />
           </TabPane>
         </Tabs>

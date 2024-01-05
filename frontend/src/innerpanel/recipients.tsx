@@ -6,11 +6,11 @@ import { appearanceLine } from "./senders";
 import { resetWarned } from "antd/es/_util/warning";
 
 export const Recipients: React.FC = () => {
-  var [asRecipient, setFromTopTen] = useState("This is the asRecipient panel");
+  var [asRecipient, setRecipient] = useState("This is the asRecipient panel");
 
   useEffect(() => {
     const update = (asRecipient: string) => {
-      setFromTopTen(asRecipient);
+      setRecipient(asRecipient);
     };
     Wails.EventsOn("asRecipient", update);
     return () => {

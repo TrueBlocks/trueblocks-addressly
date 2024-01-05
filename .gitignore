@@ -1,4 +1,7 @@
 addresses.txt
+chartType.txt
+exportExcel.txt
+addresses.txt
 build/bin
 node_modules
 wailsjs

@@ -32,7 +32,7 @@ const Config: React.FC = () => {
     }
     setCurrent(val);
     setAddress(monArray[val]);
-    Export(monArray[val], "", false);
+    Export(monArray[val], "");
   };
 
   const first = () => {

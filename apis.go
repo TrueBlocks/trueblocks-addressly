@@ -109,7 +109,6 @@ func getEthUsdPrice() (float64, error) {
 	now := time.Now().Unix()
 	if lastPrice != 0.0 {
 		if now-lastFetched < (60 * 5) {
-			logger.Info("Using cached price:", now, lastFetched, now-lastFetched, lastPrice)
 			return lastPrice, nil
 		}
 	}
@@ -117,7 +116,6 @@ func getEthUsdPrice() (float64, error) {
 	m.Lock()
 	defer m.Unlock()
 
-	logger.Info("Fetching price:", now, lastFetched, now-lastFetched, lastPrice)
 	lastFetched = now
 
 	url := "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"

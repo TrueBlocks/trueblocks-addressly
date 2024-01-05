@@ -5,11 +5,11 @@ import "./inner.css";
 import { Card } from "antd";
 
 export const Senders: React.FC = () => {
-  var [asSender, setToTopTen] = useState("This is the asSender panel");
+  var [asSender, setSender] = useState("This is the asSender panel");
 
   useEffect(() => {
     const update = (asSender: string) => {
-      setToTopTen(asSender);
+      setSender(asSender);
     };
     Wails.EventsOn("asSender", update);
     return () => {

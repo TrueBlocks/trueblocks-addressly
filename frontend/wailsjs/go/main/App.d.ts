@@ -6,11 +6,11 @@ export function Clear(arg1:string,arg2:base.Address):Promise<void>;
 
 export function CounterKey(arg1:base.Address,arg2:base.Address):Promise<string>;
 
-export function Export(arg1:string,arg2:string,arg3:boolean):Promise<void>;
+export function Export(arg1:string,arg2:string):Promise<void>;
+
+export function Freshen(arg1:string,arg2:string):Promise<void>;
 
 export function OpenUrl(arg1:string):Promise<void>;
-
-export function Reload(arg1:string,arg2:string,arg3:boolean):Promise<void>;
 
 export function SetAddress(arg1:string):Promise<void>;
 

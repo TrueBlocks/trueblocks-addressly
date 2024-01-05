@@ -10,16 +10,16 @@ export function CounterKey(arg1, arg2) {
   return window['go']['main']['App']['CounterKey'](arg1, arg2);
 }
 
-export function Export(arg1, arg2, arg3) {
-  return window['go']['main']['App']['Export'](arg1, arg2, arg3);
+export function Export(arg1, arg2) {
+  return window['go']['main']['App']['Export'](arg1, arg2);
+}
+
+export function Freshen(arg1, arg2) {
+  return window['go']['main']['App']['Freshen'](arg1, arg2);
 }
 
 export function OpenUrl(arg1) {
   return window['go']['main']['App']['OpenUrl'](arg1);
-}
-
-export function Reload(arg1, arg2, arg3) {
-  return window['go']['main']['App']['Reload'](arg1, arg2, arg3);
 }
 
 export function SetAddress(arg1) {

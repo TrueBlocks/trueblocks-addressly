@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/base"
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/logger"
 )
 
@@ -14,16 +17,16 @@ func (a *App) SetAddress(addressOrEns string) {
 
 func (a *App) SetChain(chain string, addressOrEns string) {
 	a.dataFile.Chain = chain
-	a.Export(addressOrEns, "", false)
+	a.Export(addressOrEns, "")
 	logger.Info("Setting chain to:", chain)
 }
 
 func (a *App) SetChartType(chartType string) {
-	// a.chartType = chartType
-	logger.Info("Chart type changed to:", chartType)
+	// logger.Info("Setting chartType to:", chartType)
+	file.StringToAsciiFile("chartType.txt", chartType)
 }
 
-func (a *App) SetExportExcel(onOff bool) {
-	// a.exportExcel = onOff
-	logger.Info("ExportExcel changed to: ", onOff)
+func (a *App) SetExportExcel(exportExcel bool) {
+	// logger.Info("Setting exportExcel to: ", exportExcel)
+	file.StringToAsciiFile("exportExcel.txt", fmt.Sprintf("%t", exportExcel))
 }

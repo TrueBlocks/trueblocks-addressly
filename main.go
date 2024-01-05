@@ -18,7 +18,7 @@ func main() {
 	opts := options.App{
 		Title:  "TrueBlocks Account Explorer",
 		Width:  1024,
-		Height: 300,
+		Height: 1000,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
