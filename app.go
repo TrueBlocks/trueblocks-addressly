@@ -105,7 +105,11 @@ func (a *App) OpenUrl(url string) {
 func (a *App) domReady(ctx context.Context) {
 	a.Export(a.dataFile.Address.Hex(), "")
 	a.updateState()
-	runtime.EventsEmit(a.ctx, "chartType", strings.Trim(file.AsciiFileToString("chartType.txt"), "\n"))
+	chartType := strings.Trim(file.AsciiFileToString("chartType.txt"), "\n")
+	if chartType == "" {
+		chartType = "month"
+	}
+	runtime.EventsEmit(a.ctx, "chartType", chartType)
 	runtime.EventsEmit(a.ctx, "exportExcel", strings.Trim(file.AsciiFileToString("exportExcel.txt"), "\n"))
 	if file.FileExists("addresses.txt") {
 		lines := file.AsciiFileToLines("addresses.txt")
