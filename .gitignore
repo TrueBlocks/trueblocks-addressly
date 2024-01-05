@@ -1,7 +1,8 @@
 addresses.txt
+browse.toml
 chartType.txt
 exportExcel.txt
-build/bin
+build
 node_modules
 wailsjs
 frontend/dist
