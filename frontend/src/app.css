@@ -1,0 +1,28 @@
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.panel {
+  margin: 1px;
+  padding: 1px;
+  /* border: 1px solid yellow; */
+}
+
+.window {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 90px 1fr 40px;
+  width: 100vw;
+  height: 100vh;
+  margin-bottom: 5px;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 1fr 9fr;
+  overflow:hidden;
+}
