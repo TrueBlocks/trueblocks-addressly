@@ -28,11 +28,15 @@ griff.eth
 vitalik.eth
 giveth.eth
 ethereumfoundation.eth
-gitcoin.eth
 gnosis.eth
 makerdao.eth
 molochdao.eth
-ethdenver.eth`;
+0xdd94de9cfe063577051a5eb7465d08317d8808b6
+ethdenver.eth
+chasewright.eth
+makingprogress.eth
+omnianalytics.eth
+austingriffith.eth`;
 
 export const AppContext = createContext<IAppContext>({
   address: "",

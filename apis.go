@@ -6,14 +6,15 @@ import (
 	"io/ioutil"
 	"math/big"
 	"net/http"
-	"os"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/base"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/colors"
-	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/filter"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/logger"
+	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/monitor"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/types"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/utils"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -47,58 +48,99 @@ func (a *App) updateState() {
 }
 
 func (a *App) getInfo(addressOrEns string) string {
-	fn := "/tmp/" + a.dataFile.Chain + "_" + a.dataFile.Address.Hex() + ".info"
-	defer os.Remove(fn)
+	filter := filter.NewFilter(
+		false,
+		false,
+		[]string{},
+		base.BlockRange{First: 0, Last: utils.NOPOS},
+		base.RecordRange{First: 0, Last: utils.NOPOS},
+	)
 
-	cmd := Command{
-		MaxRecords: int(maxRecords),
-		Address:    a.dataFile.Address,
-		Filename:   fn,
-		Format:     "csv",
-		Subcommand: "list",
-		Rest:       "--bounds --no_header",
-		Silent:     true,
-		Chain:      a.dataFile.Chain,
+	chain := a.dataFile.Chain
+	addrs := []string{a.dataFile.Address.Hex()}
+	monitorArray := make([]monitor.Monitor, 0, len(addrs))
+	updater := monitor.NewUpdater(chain, false, true, addrs)
+	if canceled, err := updater.FreshenMonitors(&monitorArray); err != nil || canceled {
+		logger.Error("Error fetching monitor: ", err)
+		return ""
+	} else {
+		mon := monitorArray[0]
+		if apps, cnt, err := mon.ReadAndFilterAppearances(filter, true); err != nil {
+			logger.Error("Error fetching monitor: ", err)
+			return ""
+		} else if cnt == 0 {
+			logger.Error("no appearances found for", mon.Address.Hex())
+			return ""
+		} else {
+			firstApp := apps[0]
+			latestApp := apps[len(apps)-1]
+			rng := latestApp.BlockNumber - firstApp.BlockNumber
+			name := a.namesMap[a.dataFile.Chain][a.dataFile.Address].Name
+			if name == "" {
+				name = addressOrEns
+			}
+			ethBalance, usdBalance := a.getPrices()
+			res := struct {
+				name      string
+				addr      string
+				cnt       string
+				firstApp  string
+				latestApp string
+				ethBal    string
+				blkRng    string
+				blkFreq   string
+				usdBal    string
+			}{
+				name:      name,
+				addr:      a.dataFile.Address.Hex(),
+				cnt:       fmt.Sprintf("%d", cnt),
+				firstApp:  fmt.Sprintf("%d.%d %s", firstApp.BlockNumber, firstApp.TransactionIndex, firstApp.Date()),
+				latestApp: fmt.Sprintf("%d.%d %s", latestApp.BlockNumber, latestApp.TransactionIndex, latestApp.Date()),
+				ethBal:    ethBalance,
+				blkRng:    fmt.Sprintf("%d", rng),
+				blkFreq:   fmt.Sprintf("%d", int64(float64(rng)/float64(cnt))),
+				usdBal:    usdBalance,
+			}
+
+			return fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s,%s",
+				strings.Replace(res.name, ",", " ", -1),
+				res.addr,
+				res.cnt,
+				res.firstApp,
+				res.latestApp,
+				res.ethBal,
+				res.blkRng,
+				res.blkFreq,
+				res.usdBal,
+			)
+		}
 	}
-	// logger.Info("Running command: ", cmd.String())
-	_ = utils.System(cmd.String())
+}
 
-	var price float64
-	var err error
-	if price, err = getEthUsdPrice(); err != nil {
-		logger.Info(colors.Red, "Error fetching price: ", err, colors.Off)
-	}
-
+func (a *App) getPrices() (string, string) {
 	ethBalance := ""
 	usdBalance := ""
-	if bal, err := a.conn.GetBalanceAt(a.dataFile.Address, a.conn.GetLatestBlockNumber()); err != nil {
-		ethBalance = "0.000000000000000000"
-		usdBalance = "0.00"
+
+	if price, err := getEthUsdPrice(); err != nil {
+		logger.Error(colors.Red, "error fetching price: ", err, colors.Off)
+
 	} else {
-		ethBalance = utils.FormattedValue(*bal, true, 18)
-		eb := big.Float{}
-		eb.SetString(ethBalance)
-		p := big.Float{}
-		p.SetFloat64(price)
-		eb.Mul(&eb, &p)
-		usdBalance = eb.Text('f', 2)
+		if bal, err := a.conn.GetBalanceAt(a.dataFile.Address, a.conn.GetLatestBlockNumber()); err != nil {
+			ethBalance = "0.000000000000000000"
+			usdBalance = "0.00"
+
+		} else {
+			ethBalance = utils.FormattedValue(*bal, true, 18)
+			eb := big.Float{}
+			eb.SetString(ethBalance)
+			p := big.Float{}
+			p.SetFloat64(price)
+			eb.Mul(&eb, &p)
+			usdBalance = eb.Text('f', 2)
+		}
 	}
 
-	contents := strings.ToLower(addressOrEns) + "," + file.AsciiFileToString(fn) + "," + ethBalance + "," + usdBalance
-	parts := strings.Split(contents, ",")
-	if len(parts) < 11 {
-		return ""
-	}
-	parts[0] = a.namesMap[a.dataFile.Chain][a.dataFile.Address].Name
-	parts[3] = parts[3] + " " + parts[5]
-	parts[4] = parts[6] + " " + parts[8]
-	parts[5] = parts[11]
-	parts[6] = parts[9]
-	parts[7] = parts[10]
-	parts[8] = parts[12]
-	return strings.Join(parts[:9], ",")
-	// return file.AsciiFileToString(fn)
-	//trueblocks.eth,0xf503017d7baf7fbc0fff7492b751025c6a78179b,4158,8854723.61,1572639538,2019-11-01 20:18:58 UTC,18752751.88,1702174307,2023-12-10 02:11:47 UTC,9898028,2380 ,71.713067671079880299
+	return ethBalance, usdBalance
 }
 
 var lastPrice float64
@@ -148,22 +190,22 @@ func getEthUsdPrice() (float64, error) {
 	return apiResponse.Ethereum.USD, nil
 }
 
-func getCacheDir() string {
-	dirName, _ := os.UserCacheDir()
-	dirName += "/TrueBlocks/browse/"
-	if !file.FolderExists(dirName) {
-		file.EstablishFolder(dirName)
-	}
-	logger.Info("Cache dir: ", dirName, file.FolderExists(dirName))
-	return dirName
-}
+// func getCacheDir() string {
+// 	dirName, _ := os.UserCacheDir()
+// 	dirName += "/TrueBlocks/browse/"
+// 	if !file.FolderExists(dirName) {
+// 		file.EstablishFolder(dirName)
+// 	}
+// 	logger.Info("Cache dir: ", dirName, file.FolderExists(dirName))
+// 	return dirName
+// }
 
-func getConfigDir() string {
-	dirName, _ := os.UserConfigDir()
-	dirName += "/TrueBlocks/browse/"
-	if !file.FolderExists(dirName) {
-		file.EstablishFolder(dirName)
-	}
-	logger.Info("Config dir: ", dirName)
-	return dirName
-}
+// func getConfigDir() string {
+// 	dirName, _ := os.UserConfigDir()
+// 	dirName += "/TrueBlocks/browse/"
+// 	if !file.FolderExists(dirName) {
+// 		file.EstablishFolder(dirName)
+// 	}
+// 	logger.Info("Config dir: ", dirName)
+// 	return dirName
+// }

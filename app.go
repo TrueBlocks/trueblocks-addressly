@@ -75,7 +75,7 @@ func NewApp(chain string, address base.Address) *App {
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	nameParts := names.Custom | names.Prefund | names.Regular
+	nameParts := names.Custom | names.Prefund | names.Regular | names.Baddress
 	m, err := names.LoadNamesMap(a.dataFile.Chain, nameParts, nil)
 	a.namesMap[a.dataFile.Chain] = m
 	if err != nil {

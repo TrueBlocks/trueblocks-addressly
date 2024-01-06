@@ -3,6 +3,7 @@ import "./inner.css";
 import { Card } from "antd";
 import { Table, Typography } from "antd";
 import { AppContext } from "../appcontext";
+import { EditableAddress } from "../components";
 const { Text } = Typography;
 
 export const Info: React.FC = () => {
@@ -55,7 +56,7 @@ const MyTableComponent: React.FC = () => {
           {combinedArray[i + 0] + ":" ?? ""}
         </Text>
       ),
-      field2: combinedArray[i + 1] ?? "",
+      field2: combinedArray[i + 1] + "|" + combinedArray[i + 3] ?? "",
 
       field3: (
         <Text strong style={{ fontSize: "1.1em", textAlign: "right" }}>
@@ -90,13 +91,13 @@ const MyTableComponent: React.FC = () => {
         if (index === 0) {
           return (
             <span style={{ fontSize: "1.2em", color: "dodgerblue" }}>
-              {text}
+              <EditableAddress name={text} />
             </span>
           );
         }
         return text;
       },
-      overflow: "hidden",
+      ellipsis: true,
     },
     {
       dataIndex: "field3",
@@ -107,7 +108,7 @@ const MyTableComponent: React.FC = () => {
       dataIndex: "field4",
       key: "field4",
       width: widths[3],
-      overflow: "hidden",
+      ellipsis: true,
     },
     {
       dataIndex: "field5",
@@ -128,7 +129,7 @@ const MyTableComponent: React.FC = () => {
         }
         return text;
       },
-      overflow: "hidden",
+      ellipsis: true,
     },
   ];
 

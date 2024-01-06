@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import * as Wails from "../../wailsjs/runtime";
 import "./inner.css";
 import { Card } from "antd";
 import { appearanceLine } from "./senders";
-import { resetWarned } from "antd/es/_util/warning";
+import { AppContext } from "../appcontext";
 
 export const Recipients: React.FC = () => {
   var [asRecipient, setRecipient] = useState("This is the asRecipient panel");
+  var { info } = useContext(AppContext);
 
   useEffect(() => {
     const update = (asRecipient: string) => {
@@ -22,30 +23,6 @@ export const Recipients: React.FC = () => {
   return (
     <div className="panel inner-panel-body-triple">
       <Card
-        // title={
-        //   <div style={{ display: "grid", gridTemplateColumns: "10fr 1fr" }}>
-        //     <div
-        //       style={{
-        //         margin: 0,
-        //         padding: 0,
-        //         color: "blue",
-        //       }}
-        //     >
-        //       As Received
-        //     </div>
-        //     <div
-        //       style={{
-        //         margin: 0,
-        //         padding: 0,
-        //         color: "blue",
-        //         fontSize: ".7em",
-        //         fontStyle: "italic",
-        //       }}
-        //     >
-        //       context
-        //     </div>
-        //   </div>
-        // }
         title="As Receiver"
         style={{
           textAlign: "left",
@@ -56,7 +33,7 @@ export const Recipients: React.FC = () => {
         }}
       >
         {columns.map((column, index) => {
-          return appearanceLine(column);
+          return appearanceLine(column, index, info);
         })}
       </Card>
     </div>

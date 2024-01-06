@@ -6,19 +6,13 @@ import { Info, Charts, Recipients, Senders } from "./";
 export const InnerPanel = () => {
   return (
     <div className="panel inner-panel">
-      <InnerMost />
+      <div className="inner-panel-body">
+        <Info />
+        <Charts />
+        <Recipients />
+        <Senders />
+      </div>
       <Logging />
-    </div>
-  );
-};
-
-const InnerMost = function () {
-  return (
-    <div className="inner-panel-body">
-      <Info />
-      <Charts />
-      <Recipients />
-      <Senders />
     </div>
   );
 };

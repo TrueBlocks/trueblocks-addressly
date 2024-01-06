@@ -5,8 +5,6 @@ import { BarChart } from "../components";
 import { Card, Tabs } from "antd";
 import { SetChartType } from "../../wailsjs/go/main/App";
 
-const { TabPane } = Tabs;
-
 export const Charts: React.FC = () => {
   var [years, setYears] = useState("This is the years panel");
   var [months, setMonths] = useState("This is the months panel");
@@ -47,17 +45,27 @@ export const Charts: React.FC = () => {
     SetChartType(chartType);
   };
 
+  const tabItems = [
+    {
+      label: "Annually",
+      key: "year",
+      children: <BarChart str={years} />,
+    },
+    {
+      label: "Monthly",
+      key: "month",
+      children: <BarChart str={months} />,
+    },
+  ];
+
   return (
     <div className="panel inner-panel-body-triple">
-      <Card title="Appearances" style={{ textAlign: "left", width: "100%" }}>
-        <Tabs activeKey={chartType} onChange={handleTabChange}>
-          <TabPane tab="Annually" key="year">
-            <BarChart str={years} />
-          </TabPane>
-          <TabPane tab="Monthly" key="month">
-            <BarChart str={months} />
-          </TabPane>
-        </Tabs>
+      <Card title="Frequency" style={{ textAlign: "left", width: "100%" }}>
+        <Tabs
+          activeKey={chartType}
+          onChange={handleTabChange}
+          items={tabItems}
+        />
       </Card>
     </div>
   );
