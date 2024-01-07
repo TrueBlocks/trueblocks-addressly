@@ -17,18 +17,23 @@ func main() {
 	app := NewApp("mainnet", base.HexToAddress("0xf503017d7baf7fbc0fff7492b751025c6a78179b"))
 	opts := options.App{
 		Title:  "TrueBlocks Account Explorer",
-		Width:  1024,
-		Height: 1000,
+		Width:  app.config.WindowState.Width,
+		Height: app.config.WindowState.Height,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
 		BackgroundColour: &options.RGBA{R: 33, G: 37, B: 41, A: 1},
 		OnStartup:        app.startup,
 		OnDomReady:       app.domReady,
+		OnShutdown:       app.shutdown,
 		Bind: []interface{}{
 			app,
 		},
-		WindowStartState: options.Maximised,
+		StartHidden: true,
+		// Debug: options.Debug{
+		// 	OpenInspectorOnStartup: true,
+		// },
+		// WindowStartState: options.Maximised,
 	}
 
 	done := false

@@ -1,14 +1,20 @@
 import React, { useContext } from "react";
 import "./inner.css";
-import { Card } from "antd";
-import { Table, Typography } from "antd";
+import { Card, Table, Typography } from "antd";
 import { AppContext } from "../appcontext";
+import { EditableAddress } from "../components";
 const { Text } = Typography;
 
 export const Info: React.FC = () => {
-  var { info } = useContext(AppContext);
   return (
-    <Card className="inner-panel-body-single" style={{ width: "100%" }}>
+    <Card
+      style={{
+        gridColumn: "1 / -1",
+        alignItems: "flex-start",
+        justifyItems: "flex-start",
+        width: "105%"
+      }}
+    >
       {/* <div style={{ color: "black" }}>{info}</div> */}
       <MyTableComponent />
     </Card>
@@ -26,7 +32,7 @@ interface TableRow {
 }
 
 const MyTableComponent: React.FC = () => {
-  var { info } = useContext(AppContext);
+  const { info } = useContext(AppContext);
 
   const fields = info.split(",");
   const fieldNames = [
@@ -38,12 +44,12 @@ const MyTableComponent: React.FC = () => {
     "ETH Balance",
     "Block Span",
     "Blocks Between",
-    "USD Balance",
+    "USD Balance"
   ];
 
-  const combinedArray = fieldNames.reduce(
+  const combinedArray = fieldNames.reduce<string[]>(
     (acc, name, index) => [...acc, name, fields[index] ?? ""],
-    [] as string[]
+    []
   );
 
   const tableData: TableRow[] = [];
@@ -55,7 +61,7 @@ const MyTableComponent: React.FC = () => {
           {combinedArray[i + 0] + ":" ?? ""}
         </Text>
       ),
-      field2: combinedArray[i + 1] ?? "",
+      field2: combinedArray[i + 1] + "|" + combinedArray[i + 3] ?? "",
 
       field3: (
         <Text strong style={{ fontSize: "1.1em", textAlign: "right" }}>
@@ -69,7 +75,7 @@ const MyTableComponent: React.FC = () => {
           {combinedArray[i + 4] + ":" ?? ""}
         </Text>
       ),
-      field6: combinedArray[i + 5] ?? "",
+      field6: combinedArray[i + 5] ?? ""
     };
     tableData.push(row);
   }
@@ -80,6 +86,7 @@ const MyTableComponent: React.FC = () => {
       dataIndex: "field1",
       key: "field1",
       width: widths[0],
+      ellipsis: true
     },
     {
       dataIndex: "field2",
@@ -90,29 +97,31 @@ const MyTableComponent: React.FC = () => {
         if (index === 0) {
           return (
             <span style={{ fontSize: "1.2em", color: "dodgerblue" }}>
-              {text}
+              <EditableAddress name={text} />
             </span>
           );
         }
         return text;
       },
-      overflow: "hidden",
+      ellipsis: true
     },
     {
       dataIndex: "field3",
       key: "field3",
       width: widths[2],
+      ellipsis: true
     },
     {
       dataIndex: "field4",
       key: "field4",
       width: widths[3],
-      overflow: "hidden",
+      ellipsis: true
     },
     {
       dataIndex: "field5",
       key: "field5",
       width: widths[4],
+      ellipsis: true
     },
     {
       dataIndex: "field6",
@@ -128,8 +137,8 @@ const MyTableComponent: React.FC = () => {
         }
         return text;
       },
-      overflow: "hidden",
-    },
+      ellipsis: true
+    }
   ];
 
   return (
@@ -142,9 +151,11 @@ const MyTableComponent: React.FC = () => {
       style={
         {
           whiteSpace: "nowrap",
+          // eslint-disable-line object-literal-sort-keys
           "--table-padding-vertical": "4px",
+          // eslint-disable-line object-literal-sort-keys
           "--table-padding-horizontal": "8px",
-          border: "1px solid lightgray",
+          border: "1px solid lightgray"
         } as React.CSSProperties
       }
       rowKey={(record) => record.key.toString()}

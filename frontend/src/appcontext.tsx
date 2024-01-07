@@ -1,4 +1,9 @@
-import React, { useEffect, createContext, useState, ReactNode } from "react";
+import React, {
+  useEffect,
+  createContext,
+  useState,
+  type ReactNode
+} from "react";
 import * as Wails from "../wailsjs/runtime";
 
 interface IChainState {
@@ -15,24 +20,32 @@ interface IAppContext {
   setInfo: React.Dispatch<React.SetStateAction<string>>;
   current: number;
   setCurrent: React.Dispatch<React.SetStateAction<number>>;
+  chartType: string;
+  setChartType: React.Dispatch<React.SetStateAction<string>>;
+  status: string;
+  setStatus: React.Dispatch<React.SetStateAction<string>>;
   monitors: string;
   setMonitors: React.Dispatch<React.SetStateAction<string>>;
   chainState: IChainState;
   setChainState: React.Dispatch<React.SetStateAction<IChainState>>;
 }
 
-var defaultMonitors = `trueblocks.eth
+const defaultMonitors = `trueblocks.eth
 vald.eth
 meriam.eth
 griff.eth
 vitalik.eth
 giveth.eth
 ethereumfoundation.eth
-gitcoin.eth
 gnosis.eth
 makerdao.eth
 molochdao.eth
-ethdenver.eth`;
+0xdd94de9cfe063577051a5eb7465d08317d8808b6
+ethdenver.eth
+chasewright.eth
+makingprogress.eth
+omnianalytics.eth
+austingriffith.eth`;
 
 export const AppContext = createContext<IAppContext>({
   address: "",
@@ -41,10 +54,14 @@ export const AppContext = createContext<IAppContext>({
   setInfo: () => {},
   current: 0,
   setCurrent: () => {},
+  chartType: "month",
+  setChartType: () => {},
+  status: "Enter an address at the left...",
+  setStatus: () => {},
   monitors: defaultMonitors,
   setMonitors: () => {},
   chainState: { block: "", date: "", price: "", chain: "" },
-  setChainState: () => {},
+  setChainState: () => {}
 });
 
 interface AppProviderProps {
@@ -56,22 +73,25 @@ export function AppProvider({ children }: AppProviderProps) {
   const [current, setCurrent] = useState(0);
   const [info, setInfo] = useState("");
   const [monitors, setMonitors] = useState(defaultMonitors);
+  const [chartType, setChartType] = useState("month");
+  const [status, setStatus] = useState("Enter an address at the left...");
   const [chainState, setChainState] = useState<IChainState>({
     block: "",
     date: "",
     price: "",
-    chain: "",
+    chain: ""
   });
 
   useEffect(() => {
-    const update = (newBlock: string) => {
-      var parts = newBlock.split("|");
+    const update = (cS: string): void => {
+      const parts = cS.split("|");
       setChainState({
         block: parts[0],
         date: parts[1],
         price: parts[2],
-        chain: parts[3],
+        chain: parts[3]
       });
+      // console.log("useEffect update chainState: ", cS, chainState);
     };
     Wails.EventsOn("chainState", update);
     return () => {
@@ -80,8 +100,9 @@ export function AppProvider({ children }: AppProviderProps) {
   }, []);
 
   useEffect(() => {
-    const update = (info: string) => {
-      setInfo(info);
+    const update = (i: string): void => {
+      setInfo(i);
+      // console.log("useEffect update info: ", i, info);
     };
     Wails.EventsOn("info", update);
     return () => {
@@ -90,12 +111,24 @@ export function AppProvider({ children }: AppProviderProps) {
   }, []);
 
   useEffect(() => {
-    const update = (monitors: string) => {
-      setMonitors(monitors);
+    const update = (mon: string): void => {
+      setMonitors(mon);
+      // console.log("useEffect update monitors: ", mon, monitors);
     };
     Wails.EventsOn("monitors", update);
     return () => {
       Wails.EventsOff("monitors");
+    };
+  }, []);
+
+  useEffect(() => {
+    const update = (ct: string): void => {
+      setChartType(ct);
+      // console.log("useEffect update chartType: ", ct, chartType);
+    };
+    Wails.EventsOn("chartType", update);
+    return () => {
+      Wails.EventsOff("chartType");
     };
   }, []);
 
@@ -106,10 +139,14 @@ export function AppProvider({ children }: AppProviderProps) {
     setInfo,
     current,
     setCurrent,
+    chartType,
+    setChartType,
+    status,
+    setStatus,
     monitors,
     setMonitors,
     chainState,
-    setChainState,
+    setChainState
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

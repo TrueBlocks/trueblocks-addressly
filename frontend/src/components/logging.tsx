@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
 import * as Wails from "../../wailsjs/runtime/runtime";
-import "../App.css";
+import "./logging.css";
 
 export const Logging = () => {
   const [progress, setProgress] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const updateProgress = (progress: string) => setProgress(progress);
+    const updateProgress = (progress: string) => {
+      setProgress(progress);
+    };
     Wails.EventsOn("progress", updateProgress);
 
-    const updateError = (error: string) => setError(error);
+    const updateError = (error: string) => {
+      setError(error);
+    };
     Wails.EventsOn("error", updateError);
 
     return () => {
