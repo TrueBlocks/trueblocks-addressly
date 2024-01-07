@@ -1,8 +1,8 @@
-addresses.txt
-chartType.txt
-exportExcel.txt
-build/bin
+.DS_Store
+
+*addresses*.txt
+build
 node_modules
 wailsjs
 frontend/dist
-.DS_Store
+yarn-error.log

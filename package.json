@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "prod": "rm -fR build && wails build && open ./build/bin/*.app",
+    "dev": "wails dev"
+  },
   "devDependencies": {
     "typescript": "^5.3.3"
   }
