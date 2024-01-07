@@ -1,13 +1,13 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
   "name": "TrueBlocks Account Browser",
-  "outputfilename": "myst",
-  "frontend:install": "npm install",
-  "frontend:build": "npm run build",
-  "frontend:dev:watcher": "npm run dev",
+  "outputfilename": "browse",
+  "frontend:install": "yarn install",
+  "frontend:build": "yarn run build",
+  "frontend:dev:watcher": "yarn run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "tjayrush",
+    "name": "TrueBlokcs, LLC",
     "email": "jrush@quickblocks.io"
   }
 }

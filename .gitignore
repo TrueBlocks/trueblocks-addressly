@@ -1,8 +1,11 @@
 .DS_Store
 
 *addresses*.txt
+yarn-error.log
+
 build
+frontend/dist
 node_modules
 wailsjs
-frontend/dist
-yarn-error.log
+
+go.work

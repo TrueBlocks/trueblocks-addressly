@@ -1,7 +1,8 @@
 {
   "scripts": {
     "prod": "rm -fR build && wails build && open ./build/bin/*.app",
-    "dev": "wails dev"
+    "dev": "wails dev 2>&1 | grep -v 'AssetHandler'",
+    "lint": "staticcheck ./... && cd frontend && yarn run eslint . --ext .ts,.tsx"
   },
   "devDependencies": {
     "typescript": "^5.3.3"
