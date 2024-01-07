@@ -1,4 +1,4 @@
-module changeme
+module github.com/TrueBlocks/trueblocks-addressly
 
 go 1.21
 

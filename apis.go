@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math/big"
 	"net/http"
 	"strings"
@@ -42,7 +42,7 @@ func (a *App) updateState() {
 			Timestamp:   block.Timestamp,
 		}
 		state := fmt.Sprintf("%d|%s|%.2f", s.BlockNumber, s.Date(), price)
-		logger.Info("Sending state: ", state)
+		// logger.Info("Sending state: ", state)
 		runtime.EventsEmit(a.ctx, "chainState", state)
 	}
 }
@@ -174,7 +174,7 @@ func getEthUsdPrice() (float64, error) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logger.Error("Error 2: ", err)
 		return lastPrice, err
@@ -189,23 +189,3 @@ func getEthUsdPrice() (float64, error) {
 	lastPrice = apiResponse.Ethereum.USD
 	return apiResponse.Ethereum.USD, nil
 }
-
-// func getCacheDir() string {
-// 	dirName, _ := os.UserCacheDir()
-// 	dirName += "/TrueBlocks/browse/"
-// 	if !file.FolderExists(dirName) {
-// 		file.EstablishFolder(dirName)
-// 	}
-// 	logger.Info("Cache dir: ", dirName, file.FolderExists(dirName))
-// 	return dirName
-// }
-
-// func getConfigDir() string {
-// 	dirName, _ := os.UserConfigDir()
-// 	dirName += "/TrueBlocks/browse/"
-// 	if !file.FolderExists(dirName) {
-// 		file.EstablishFolder(dirName)
-// 	}
-// 	logger.Info("Config dir: ", dirName)
-// 	return dirName
-// }

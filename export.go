@@ -2,11 +2,16 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
+	"sync"
+	"syscall"
 	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
+	"github.com/TrueBlocks/trueblocks-addressly/pkg/config"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/base"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/monitor"
@@ -45,6 +50,9 @@ func (a *App) initExport(addressOrEns string) (base.Address, error) {
 
 	if a.namesMap[a.dataFile.Chain][a.dataFile.Address].Name == "" {
 		n := types.SimpleName{Name: addressOrEns, Address: a.dataFile.Address}
+		if a.namesMap[a.dataFile.Chain] == nil {
+			a.namesMap[a.dataFile.Chain] = make(map[base.Address]types.SimpleName)
+		}
 		a.namesMap[a.dataFile.Chain][a.dataFile.Address] = n
 	}
 
@@ -52,6 +60,8 @@ func (a *App) initExport(addressOrEns string) (base.Address, error) {
 }
 
 var exportToExcel = false
+var escPressed bool = true
+var mutex sync.Mutex
 
 func (a *App) Export(addressOrEns, mode string) {
 	defer func() {
@@ -65,9 +75,12 @@ func (a *App) Export(addressOrEns, mode string) {
 
 	} else {
 		dfKey := a.dataFile
-		folder := "/Users/jrush/Development/trueblocks-addressly/downloads/" + a.dataFile.Chain + "/"
-		file.EstablishFolder(folder)
+		folder := config.GetCacheFolder(a.dataFile.Chain + "/downloads")
 		fn := folder + a.dataFile.Address.Hex() + ".csv"
+		// logger.Info("Download dir: ", folder, file.FolderExists(folder))
+		// if true {
+		// 	os.Exit(1)
+		// }
 
 		if a.monitors[dfKey] != nil {
 			a.Summarize(addressOrEns)
@@ -110,7 +123,9 @@ func (a *App) Export(addressOrEns, mode string) {
 			Silent:     false,
 			Chain:      a.dataFile.Chain,
 		}
-		_ = utils.System(cmd.String())
+
+		escPressed = false
+		_ = System2(cmd.String(), &escPressed, &mutex)
 
 		a.lines[dfKey] = file.AsciiFileToLines(fn)
 		if len(a.lines[dfKey]) == 0 {
@@ -123,4 +138,48 @@ func (a *App) Export(addressOrEns, mode string) {
 			a.Summarize(addressOrEns)
 		}
 	}
+}
+
+func System2(cmd string, escPressed *bool, mutex *sync.Mutex) int {
+	c := exec.Command("sh", "-c", cmd)
+	c.Stdin = os.Stdin
+	c.Stdout = os.Stdout
+	c.Stderr = os.Stderr
+
+	err := c.Start()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	go func() {
+		for {
+			time.Sleep(100 * time.Millisecond) // Check every 100ms
+			mutex.Lock()
+			if *escPressed {
+				mutex.Unlock()
+				c.Process.Kill()
+				return
+			}
+			mutex.Unlock()
+		}
+	}()
+
+	// Wait for the command to finish
+	err = c.Wait()
+
+	// Handle the exit status
+	if err == nil {
+		return 0
+	}
+
+	if ws, ok := c.ProcessState.Sys().(syscall.WaitStatus); ok {
+		if ws.Exited() {
+			return ws.ExitStatus()
+		}
+		if ws.Signaled() {
+			return -int(ws.Signal())
+		}
+	}
+
+	return -1
 }

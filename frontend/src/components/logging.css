@@ -1,0 +1,16 @@
+.inner-panel-footer {
+  background-color: black;
+  color: yellowgreen;
+  height: 2.5em;
+}
+
+.inner-panel-footer.error {
+  background-color: red ;
+  color: white;
+  font-weight: bold;
+}
+
+.inner-panel-footer.empty {
+  color: rgba(211, 211, 211, 0.75);
+  font-style: italic;
+}

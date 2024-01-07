@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import * as Wails from "../../wailsjs/runtime";
 import "./inner.css";
+import { AppContext } from "../appcontext";
 import { BarChart } from "../components";
 import { Card, Tabs } from "antd";
 import { SetChartType } from "../../wailsjs/go/main/App";
@@ -8,10 +9,10 @@ import { SetChartType } from "../../wailsjs/go/main/App";
 export const Charts: React.FC = () => {
   var [years, setYears] = useState("This is the years panel");
   var [months, setMonths] = useState("This is the months panel");
-  var [chartType, setChartType] = useState("");
+  var { chartType, setChartType } = useContext(AppContext);
 
   useEffect(() => {
-    const update = (months: string) => {
+    const update = (months: string): void => {
       setMonths(months);
     };
     Wails.EventsOn("months", update);
@@ -21,7 +22,7 @@ export const Charts: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const update = (years: string) => {
+    const update = (years: string): void => {
       setYears(years);
     };
     Wails.EventsOn("years", update);
@@ -30,37 +31,33 @@ export const Charts: React.FC = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const update = (chartType: string) => {
-      setChartType(chartType);
-    };
-    Wails.EventsOn("chartType", update);
-    return () => {
-      Wails.EventsOff("chartType");
-    };
-  }, []);
-
-  const handleTabChange = (chartType: string) => {
-    setChartType(chartType);
-    SetChartType(chartType);
+  const handleTabChange = (ct: string): void => {
+    setChartType(ct);
+    SetChartType(ct);
   };
 
   const tabItems = [
     {
       label: "Annually",
       key: "year",
-      children: <BarChart str={years} />,
+      children: <BarChart str={years} clickHandler={handleTabChange} />
     },
     {
       label: "Monthly",
       key: "month",
-      children: <BarChart str={months} />,
-    },
+      children: <BarChart str={months} clickHandler={handleTabChange} />
+    }
   ];
 
   return (
     <div className="panel inner-panel-body-triple">
-      <Card title="Frequency" style={{ textAlign: "left", width: "100%" }}>
+      <Card
+        title="Frequency"
+        style={{
+          textAlign: "left",
+          width: "100%"
+        }}
+      >
         <Tabs
           activeKey={chartType}
           onChange={handleTabChange}

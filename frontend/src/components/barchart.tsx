@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Bar } from "react-chartjs-2";
-
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,7 +9,7 @@ import {
   Tooltip,
   Legend,
   ChartData,
-  ChartOptions,
+  ChartOptions
 } from "chart.js";
 
 ChartJS.register(
@@ -22,13 +21,13 @@ ChartJS.register(
   Legend
 );
 
-export type Props = {
+export interface Props {
   str: string;
-};
+  clickHandler: (chartType: string) => void;
+}
 
-export const BarChart: React.FC<Props> = ({ str }) => {
-  if (!str) {
-    // } || !str.includes(",")) {
+export const BarChart: React.FC<Props> = ({ str, clickHandler }) => {
+  if (str.length === 0) {
     return <div>Loading...</div>;
   }
   str = str.replace(/^,/, "").replace(/,$/, "");
@@ -58,14 +57,14 @@ export const BarChart: React.FC<Props> = ({ str }) => {
   };
 
   const chartData: ChartData<"bar"> = {
-    labels: labels,
+    labels,
     datasets: [
       {
         label: "",
-        data: data,
-        backgroundColor: generateColors(data.length),
-      },
-    ],
+        data,
+        backgroundColor: generateColors(data.length)
+      }
+    ]
   };
 
   const options: ChartOptions<"bar"> = {
@@ -74,30 +73,59 @@ export const BarChart: React.FC<Props> = ({ str }) => {
         callbacks: {
           label: function (context) {
             let label = context.dataset.label || "";
-            if (label) {
+            if (label.length > 0) {
               label += ": ";
             }
             if (context.parsed.y !== null) {
               label += new Intl.NumberFormat().format(context.parsed.y);
             }
             return label;
-          },
-        },
+          }
+        }
       },
       legend: {
-        display: false,
-      },
+        display: false
+      }
     },
     scales: {
       y: {
         ticks: {
           callback: function (value) {
             return new Intl.NumberFormat().format(value as number);
-          },
-        },
-      },
-    },
+          }
+        }
+      }
+    }
   };
 
-  return <Bar data={chartData} options={options} />;
+  const handleBarClick = (elements: any[]) => {
+    if (elements.length > 0) {
+      const firstElement = elements[0];
+      if (labels[firstElement.index].length == 4) {
+        clickHandler("month");
+      } else {
+        clickHandler("year");
+      }
+    }
+  };
+
+  return (
+    <Bar
+      data={chartData}
+      options={options}
+      onClick={(event: React.MouseEvent<HTMLCanvasElement>) => {
+        const canvas = event.currentTarget;
+        const chart = ChartJS.getChart(canvas);
+        if (chart) {
+          const elements = chart.getElementsAtEventForMode(
+            event.nativeEvent,
+            "nearest",
+            { intersect: true },
+            false
+          );
+          handleBarClick(elements);
+        }
+      }}
+    />
+  );
 };

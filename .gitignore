@@ -1,9 +1,7 @@
+.DS_Store
+
 addresses.txt
-browse.toml
-chartType.txt
-exportExcel.txt
 build
 node_modules
 wailsjs
 frontend/dist
-.DS_Store

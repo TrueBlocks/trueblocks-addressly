@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/base"
-	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/file"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/logger"
 	"github.com/TrueBlocks/trueblocks-core/src/apps/chifra/pkg/names"
 )
@@ -18,7 +17,9 @@ func (a *App) Freshen(addressOrEns, mode string) {
 	if err != nil {
 		logger.Error("Failed to load names map:", err)
 	}
-	exportToExcel = file.AsciiFileToString("exportExcel.txt") == "true"
+
+	enabled, _ := a.config.Get("settings", "exportExcel", "false")
+	exportToExcel = enabled == "true"
 	a.Export(addressOrEns, mode)
 	exportToExcel = false
 }
