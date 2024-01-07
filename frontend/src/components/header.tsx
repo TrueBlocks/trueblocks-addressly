@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext } from "react";
 import logo from "../assets/images/logo.png";
-import { Row, Col, Image } from "antd";
-import { Typography } from "antd";
+import { Row, Col, Image, Typography } from "antd";
 import { AppContext } from "../appcontext";
 const { Text, Title } = Typography;
 
@@ -20,7 +19,7 @@ var Logo = function () {
     <Col
       flex={1}
       style={{
-        textAlign: "left",
+        textAlign: "left"
       }}
     >
       <Image src={logo} alt="logo" />
@@ -49,7 +48,7 @@ var ChainState = function () {
         justifyContent: "flex-end", // Push children to the bottom
         alignItems: "flex-end", // Push children to the bottom
         paddingRight: "20px",
-        height: "80px", // Set a specific height for the Col
+        height: "80px" // Set a specific height for the Col
       }}
     >
       <Text style={{ textAlign: "right", color: "white", fontSize: ".9em" }}>

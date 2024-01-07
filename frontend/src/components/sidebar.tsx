@@ -1,19 +1,21 @@
 import React, { useState, useContext, useEffect } from "react";
 import * as Wails from "../../wailsjs/runtime";
-import { Input, Button, Typography, Space, Switch } from "antd";
+import { Input, Button, Typography, Space, Switch, message } from "antd";
 import { AppContext } from "../appcontext";
 import { Export, Freshen, SetExportExcel } from "../../wailsjs/go/main/App";
 import { ChainSelector } from "./chainselector";
 const { Text } = Typography;
 
 export const SideBar: React.FC = () => {
-  const { address, setAddress } = useContext(AppContext);
-  const [status, setStatus] = useState("Enter an address at the left...");
+  const { address, setAddress, status, setStatus } = useContext(AppContext);
   const [exportExcel, setExportExcel] = useState(false);
 
   const mode = "";
-  const exportTxs = async () => {
+  const exportTxs = async (): Promise<void> => {
     if (status == "Loading...") {
+      message.warning(
+        "Please wait for the current operation to finish or press ESC."
+      );
       return;
     }
     setStatus("Loading...");
@@ -21,8 +23,11 @@ export const SideBar: React.FC = () => {
     setStatus("");
   };
 
-  const reloadTxs = async () => {
+  const reloadTxs = async (): Promise<void> => {
     if (status == "Loading...") {
+      message.warning(
+        "Please wait for the current operation to finish or press ESC."
+      );
       return;
     }
     setStatus("Loading...");
@@ -31,8 +36,8 @@ export const SideBar: React.FC = () => {
   };
 
   useEffect(() => {
-    const update = (exportExcel: string) => {
-      setExportExcel(exportExcel === "true" ? true : false);
+    const update = (exportExcel: string): void => {
+      setExportExcel(exportExcel === "true");
     };
     Wails.EventsOn("exportExcel", update);
     return () => {
@@ -40,7 +45,7 @@ export const SideBar: React.FC = () => {
     };
   }, []);
 
-  const handleToggle = (value: boolean) => {
+  const handleToggle = (value: boolean): void => {
     setExportExcel(value);
     SetExportExcel(value);
   };
@@ -55,8 +60,10 @@ export const SideBar: React.FC = () => {
         Address or ENS:
       </Text>
       <Input
-        onChange={(e) => setAddress(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && exportTxs()}
+        onChange={(e) => {
+          setAddress(e.target.value);
+        }}
+        onKeyDown={async (e) => await (e.key === "Enter" && exportTxs())}
         value={address}
         placeholder="trueblocks.eth"
         autoFocus

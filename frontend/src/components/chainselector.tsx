@@ -1,14 +1,20 @@
 import React, { useContext } from "react";
-import { Select } from "antd";
+import { Select, message } from "antd";
 import { SetChain } from "../../wailsjs/go/main/App";
 import { AppContext } from "../appcontext";
 const { Option } = Select;
 
 export const ChainSelector: React.FC = () => {
-  const { chainState, setChainState, address } = useContext(AppContext);
+  const { chainState, setChainState, address, status } = useContext(AppContext);
 
   const defaultChain = chainState.chain || "mainnet";
   const changeChain = (value: string) => {
+    if (status === "Loading...") {
+      message.warning(
+        "Please wait for the current operation to finish or press ESC."
+      );
+      return;
+    }
     setChainState({ ...chainState, chain: value });
     SetChain(value, address);
   };

@@ -1,10 +1,11 @@
-import React, { useState, useContext } from "react";
-import { Button, Layout, Row, Col, Tooltip, Typography } from "antd";
+import React, { useContext } from "react";
+import { Button, Row, Col, Tooltip, Typography, message } from "antd";
 import { Export, OpenUrl } from "../../wailsjs/go/main/App";
+import { WarningOutlined } from "@ant-design/icons";
 import {
   TwitterOutlined,
   GithubOutlined,
-  GlobalOutlined,
+  GlobalOutlined
 } from "@ant-design/icons";
 import { AppContext } from "../appcontext";
 const { Text } = Typography;
@@ -20,19 +21,35 @@ export const FooterDiv: React.FC = () => {
 };
 
 const Config: React.FC = () => {
-  const { current, setCurrent, address, setAddress, monitors } =
-    useContext(AppContext);
+  const {
+    current,
+    setCurrent,
+    address,
+    setAddress,
+    monitors,
+    status,
+    setStatus
+  } = useContext(AppContext);
 
-  var monArray = monitors.split("\n");
-  const setValue = (val: number) => {
+  const monArray = monitors.split("\n");
+  const setValue = async (val: number): Promise<void> => {
+    if (status == "Loading...") {
+      message.warning(
+        "Please wait for the current operation to finish or press ESC."
+      );
+      return;
+    }
     if (val < 0) {
       val = monArray.length - 1;
     } else if (val == monArray.length) {
       val = 0;
     }
+    const mode = "";
     setCurrent(val);
     setAddress(monArray[val]);
-    Export(monArray[val], "");
+    setStatus("Loading...");
+    await Export(monArray[val], mode);
+    setStatus("");
   };
 
   const first = () => {
@@ -57,7 +74,7 @@ const Config: React.FC = () => {
       style={{
         marginLeft: "-40px",
         marginTop: "-70px",
-        textAlign: "left",
+        textAlign: "left"
       }}
     >
       <Button
@@ -110,7 +127,9 @@ const IconTray: React.FC = () => {
           <Tooltip title="Twitter">
             <a
               href="#"
-              onClick={() => OpenUrl("https://twitter.com/trueblocks")}
+              onClick={async () => {
+                await OpenUrl("https://twitter.com/trueblocks");
+              }}
             >
               <TwitterOutlined
                 style={{ fontSize: "20px", color: "white", marginLeft: "10px" }}
@@ -122,7 +141,9 @@ const IconTray: React.FC = () => {
           <Tooltip title="Discord">
             <a
               href="#"
-              onClick={() => OpenUrl("https://discord.com/invite/kAFcZH2x7K")}
+              onClick={async () => {
+                await OpenUrl("https://discord.com/invite/kAFcZH2x7K");
+              }}
             >
               <DiscordIcon color="white" />
             </a>
@@ -130,7 +151,12 @@ const IconTray: React.FC = () => {
         </Col>
         <Col>
           <Tooltip title="GitHub">
-            <a href="#" onClick={() => OpenUrl("http://github.com/TrueBlocks")}>
+            <a
+              href="#"
+              onClick={async () => {
+                await OpenUrl("http://github.com/TrueBlocks");
+              }}
+            >
               <GithubOutlined
                 style={{ fontSize: "20px", color: "white", marginLeft: "10px" }}
               />
@@ -139,7 +165,12 @@ const IconTray: React.FC = () => {
         </Col>
         <Col>
           <Tooltip title="TrueBlocks">
-            <a href="#" onClick={() => OpenUrl("https://trueblocks.io/")}>
+            <a
+              href="#"
+              onClick={async () => {
+                await OpenUrl("https://trueblocks.io/");
+              }}
+            >
               <GlobalOutlined
                 style={{ fontSize: "20px", color: "white", marginLeft: "10px" }}
               />

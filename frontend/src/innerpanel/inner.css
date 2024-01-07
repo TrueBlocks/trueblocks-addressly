@@ -12,13 +12,14 @@
   width: 100%;
   overflow: scroll;
   border-left: 1px solid lightgray;
+  padding: 5px;
 }
 
 .inner-panel-body {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr;
   grid-template-rows: 1fr 9fr;
-  gap: 10px;
+  gap: 5px;
   align-items: flex-start;
   justify-items: flex-start;
   overflow: auto;
@@ -56,4 +57,8 @@
 .inner-panel-footer.empty {
   color: rgba(211, 211, 211, 0.75);
   font-style: italic;
+}
+
+.ant-table-cell {
+    vertical-align: top;
 }
