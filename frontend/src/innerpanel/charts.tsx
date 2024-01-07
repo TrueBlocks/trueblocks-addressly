@@ -40,12 +40,22 @@ export const Charts: React.FC = () => {
     {
       label: "Annually",
       key: "year",
-      children: <BarChart str={years} clickHandler={handleTabChange} />
+      children: (
+        <>
+          <div>{years}</div>
+          <BarChart dataStr={years} clickHandler={handleTabChange} />
+        </>
+      )
     },
     {
       label: "Monthly",
       key: "month",
-      children: <BarChart str={months} clickHandler={handleTabChange} />
+      children: (
+        <>
+          <div>{months}</div>
+          <BarChart dataStr={months} clickHandler={handleTabChange} />
+        </>
+      )
     }
   ];
 

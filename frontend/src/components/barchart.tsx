@@ -22,32 +22,17 @@ ChartJS.register(
 );
 
 export interface Props {
-  str: string;
+  dataStr: string;
   clickHandler: (chartType: string) => void;
 }
 
-export const BarChart: React.FC<Props> = ({ str, clickHandler }) => {
-  if (str.length === 0) {
+export const BarChart: React.FC<Props> = ({ dataStr, clickHandler }) => {
+  if (dataStr.length === 0) {
     return <div>Loading...</div>;
   }
-  str = str.replace(/^,/, "").replace(/,$/, "");
+  dataStr = dataStr.replace(/^,/, "").replace(/,$/, "");
 
-  const parseDataString = (
-    str: string
-  ): { labels: string[]; data: number[] } => {
-    const pairs = str.split(",");
-    const labels: string[] = [];
-    const data: number[] = [];
-    pairs.forEach((pair) => {
-      const [label, count] = pair.split("|").map((str) => str.trim());
-      labels.push(label);
-      data.push(parseInt(count));
-    });
-
-    return { labels, data };
-  };
-
-  const { labels, data } = parseDataString(str);
+  const { labels, data } = parseDataString(dataStr);
 
   const generateColors = (length: number): string[] => {
     return Array.from(
@@ -133,4 +118,17 @@ export const BarChart: React.FC<Props> = ({ str, clickHandler }) => {
       }}
     />
   );
+};
+
+const parseDataString = (str: string): { labels: string[]; data: number[] } => {
+  const pairs = str.split(",");
+  const labels: string[] = [];
+  const data: number[] = [];
+  pairs.forEach((pair) => {
+    const [label, count] = pair.split("|").map((str) => str.trim());
+    labels.push(label);
+    data.push(parseInt(count));
+  });
+
+  return { labels, data };
 };

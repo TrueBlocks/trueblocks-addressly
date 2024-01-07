@@ -5,3 +5,4 @@ build
 node_modules
 wailsjs
 frontend/dist
+yarn-error.log
