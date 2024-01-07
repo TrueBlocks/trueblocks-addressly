@@ -7,9 +7,9 @@ import { Card, Tabs } from "antd";
 import { SetChartType } from "../../wailsjs/go/main/App";
 
 export const Charts: React.FC = () => {
-  var [years, setYears] = useState("This is the years panel");
-  var [months, setMonths] = useState("This is the months panel");
-  var { chartType, setChartType } = useContext(AppContext);
+  const [years, setYears] = useState("This is the years panel");
+  const [months, setMonths] = useState("This is the months panel");
+  const { chartType, setChartType } = useContext(AppContext);
 
   useEffect(() => {
     const update = (months: string): void => {

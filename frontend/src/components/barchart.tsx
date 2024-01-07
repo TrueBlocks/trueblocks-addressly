@@ -101,6 +101,11 @@ export const BarChart: React.FC<Props> = ({ str, clickHandler }) => {
   const handleBarClick = (elements: any[]) => {
     if (elements.length > 0) {
       const firstElement = elements[0];
+      // console.log(
+      //   `Bar clicked: ${firstElement.index} ${labels[firstElement.index]} ${
+      //     data[firstElement.index]
+      //   }`
+      // );
       if (labels[firstElement.index].length == 4) {
         clickHandler("month");
       } else {

@@ -12,6 +12,7 @@
     "@ant-design/plots": "^2.1.5",
     "antd": "^5.12.7",
     "chart.js": "^4.4.1",
+    "mousetrap": "^1.6.5",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
@@ -19,6 +20,7 @@
     "styled-components": "^6.1.6"
   },
   "devDependencies": {
+    "@types/mousetrap": "^1.6.15",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.0.1",

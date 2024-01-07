@@ -142,12 +142,12 @@ func (a *App) Export(addressOrEns, mode string) {
 
 func System2(cmd string, escPressed *bool, mutex *sync.Mutex) int {
 	c := exec.Command("sh", "-c", cmd)
+	c.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	c.Stdin = os.Stdin
 	c.Stdout = os.Stdout
 	c.Stderr = os.Stderr
 
-	err := c.Start()
-	if err != nil {
+	if err := c.Start(); err != nil {
 		log.Fatal(err)
 	}
 
@@ -157,7 +157,12 @@ func System2(cmd string, escPressed *bool, mutex *sync.Mutex) int {
 			mutex.Lock()
 			if *escPressed {
 				mutex.Unlock()
-				c.Process.Kill()
+				// c.Process.Kill()
+				// if pgid, err := syscall.Getpgid(c.Process.Pid); err != nil {
+				// 	panic(err)
+				// } else {
+				syscall.Kill(-c.Process.Pid, syscall.SIGTERM) // Note the minus sign
+				// }
 				return
 			}
 			mutex.Unlock()
@@ -165,7 +170,7 @@ func System2(cmd string, escPressed *bool, mutex *sync.Mutex) int {
 	}()
 
 	// Wait for the command to finish
-	err = c.Wait()
+	err := c.Wait()
 
 	// Handle the exit status
 	if err == nil {

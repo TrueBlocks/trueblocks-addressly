@@ -44,10 +44,10 @@ export const TransactionsTable: React.FC<{
         return (
           <div>
             <div style={tx.isFromSelf ? self : other}>
-              {tx.from === "" ? "ABCDE" : tx.from}
+              {tx.from === "" ? "unnamed" : tx.from}
             </div>
             <div style={tx.isToSelf ? self : other}>
-              {tx.to === "" ? "XYZ" : tx.to}
+              {tx.to === "" ? "unnamed" : tx.to}
             </div>
           </div>
         );

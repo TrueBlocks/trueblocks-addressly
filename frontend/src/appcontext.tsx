@@ -1,8 +1,11 @@
 import React, {
-  useEffect,
   createContext,
   useState,
-  type ReactNode
+  useEffect,
+  Dispatch,
+  SetStateAction,
+  ReactNode,
+  FC
 } from "react";
 import * as Wails from "../wailsjs/runtime";
 
@@ -15,19 +18,19 @@ interface IChainState {
 
 interface IAppContext {
   address: string;
-  setAddress: React.Dispatch<React.SetStateAction<string>>;
+  setAddress: Dispatch<SetStateAction<string>>;
   info: string;
-  setInfo: React.Dispatch<React.SetStateAction<string>>;
+  setInfo: Dispatch<SetStateAction<string>>;
   current: number;
-  setCurrent: React.Dispatch<React.SetStateAction<number>>;
+  setCurrent: Dispatch<SetStateAction<number>>;
   chartType: string;
-  setChartType: React.Dispatch<React.SetStateAction<string>>;
+  setChartType: Dispatch<SetStateAction<string>>;
   status: string;
-  setStatus: React.Dispatch<React.SetStateAction<string>>;
+  setStatus: Dispatch<SetStateAction<string>>;
   monitors: string;
-  setMonitors: React.Dispatch<React.SetStateAction<string>>;
+  setMonitors: Dispatch<SetStateAction<string>>;
   chainState: IChainState;
-  setChainState: React.Dispatch<React.SetStateAction<IChainState>>;
+  setChainState: Dispatch<SetStateAction<IChainState>>;
 }
 
 const defaultMonitors = `trueblocks.eth
@@ -68,7 +71,7 @@ interface AppProviderProps {
   children: ReactNode;
 }
 
-export function AppProvider({ children }: AppProviderProps) {
+export const AppProvider: FC<AppProviderProps> = ({ children }) => {
   const [address, setAddress] = useState("trueblocks.eth");
   const [current, setCurrent] = useState(0);
   const [info, setInfo] = useState("");
@@ -150,4 +153,4 @@ export function AppProvider({ children }: AppProviderProps) {
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
-}
+};
